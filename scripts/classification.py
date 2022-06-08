@@ -21,9 +21,10 @@ dataset = args.dataset
     
 if dataset == 'bcss':
     from bcss_config import (
-    data_dir, 
-    outputs_dir, 
-    images_dir,
+    dataset
+)
+elif dataset == 'trento':
+    from trento_config import (
     dataset
 )
 
