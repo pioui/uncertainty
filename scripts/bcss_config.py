@@ -13,8 +13,8 @@ if not os.path.exists(outputs_dir):
 if not os.path.exists(images_dir):
     os.makedirs(images_dir)
 
-samples_per_class = 1000
-dataset = bcss_dataset(
+samples_per_class = 100
+dataset = bcss_Dataset(
         data_dir = data_dir,
         samples_per_class=samples_per_class
     )
