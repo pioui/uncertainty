@@ -1,7 +1,7 @@
 import logging
 import os
 
-from uncertainty.datasets import bcss_Dataset
+from uncertainty.datasets import bcss_dataset
 
 images_dir = "outputs/images/"
 outputs_dir = "outputs/"

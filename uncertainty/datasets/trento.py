@@ -11,7 +11,7 @@ random.seed(42)
 # logger = logging.getLogger(__name__)
 # logger.setLevel(logging.DEBUG)
 
-class trento_Dataset():
+class trento_dataset():
     def __init__(
         self,
         data_dir,
