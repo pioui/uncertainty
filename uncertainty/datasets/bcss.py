@@ -17,7 +17,7 @@ label_schema = np.array(
         5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
     ]
 )
-class bcss_Dataset():
+class bcss_dataset():
     def __init__(
         self,
         data_dir,
@@ -38,6 +38,7 @@ class bcss_Dataset():
         if do_preprocess: 
             x_all = normalize(x_all)
         y_all = y
+        y_all = y_all.reshape(-1) # [6439719]
         print(y_all.dtype)
 
 
@@ -81,7 +82,7 @@ class bcss_Dataset():
 
 if __name__ == "__main__":
 
-    DATASET = bcss_Dataset(
+    DATASET = bcss_dataset(
         data_dir = "/home/pigi/repos/BCSS/",
     )
 

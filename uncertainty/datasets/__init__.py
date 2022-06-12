@@ -1,7 +1,7 @@
-from .bcss import bcss_Dataset
-from .trento import trento_Dataset
+from .bcss import bcss_dataset
+from .trento import trento_dataset
 
 __all__ = [
-    "bcss_Dataset",
-    "trento_Dataset"
+    "bcss_dataset",
+    "trento_dataset"
 ]
