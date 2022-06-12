@@ -6,11 +6,8 @@ a repository for modified variance as uncertainty measure
 `conda activate ame`
 
 #### Install
-
 `python3 setup.py build install`
 #### Install - editable version
-
-# build package/ editable
 `pip install -e .`
 
 
