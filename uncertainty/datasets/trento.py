@@ -34,6 +34,8 @@ class trento_dataset():
             x_all = normalize(x_all)
 
         y = np.array(io.loadmat(data_dir+"TNsecSUBS_Test.mat")["TNsecSUBS_Test"], dtype = np.int64) # [166,600] 0 to 6
+        self.shape = y.shape
+
         y_all = y
         y_all = y_all.reshape(-1) # [99600]
 

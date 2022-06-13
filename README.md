@@ -19,3 +19,5 @@ a repository for modified variance as uncertainty measure
 
 
 
+#### Calculate and Save Uncertainty maps for all the output/*.npy files
+`python3 scripts/calculate_uncertainties.py`
