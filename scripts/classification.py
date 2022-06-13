@@ -44,7 +44,8 @@ print(X.shape, y.shape, np.unique(y))
 clf_svm = SVC(
     C=1, 
     kernel="rbf", 
-    verbose=True
+    verbose=True, 
+    probability=True
     )
 clf_svm.fit(X_train, y_train)
 svm_accuracy = clf_svm.score(X_test, y_test)
@@ -54,9 +55,9 @@ y_pred = clf_svm.predict(X_test)
 svm_confusion_matrix = confusion_matrix(y_test, y_pred, normalize='true')
 svm_confusion_matrix = np.around(svm_confusion_matrix.astype('float') / svm_confusion_matrix.sum(axis=1)[:, np.newaxis], decimals=2)
 print(f"Cofusion Matrix: {svm_confusion_matrix}")
-np.save(f"{outputs_dir}{project_name}_SVM_confusion_matrix.npy", svm_confusion_matrix)
+np.savetxt(f"{outputs_dir}{project_name}_SVM_confusion_matrix.csv", svm_confusion_matrix, delimiter=',')
 
-y_pred = clf_svm.predict(X)
+y_pred = clf_svm.predict_proba(X)
 np.save(f"{outputs_dir}{project_name}_SVM.npy", y_pred)
 
 
@@ -80,8 +81,8 @@ y_pred = clf_rf.predict(X_test)
 rf_confusion_matrix = confusion_matrix(y_test, y_pred, normalize='true')
 rf_confusion_matrix = np.around(rf_confusion_matrix.astype('float') / rf_confusion_matrix.sum(axis=1)[:, np.newaxis], decimals=2)
 print(f"Cofusion Matrix: {rf_confusion_matrix}")
-np.save(f"{outputs_dir}{project_name}_RF_confusion_matrix.npy", rf_confusion_matrix)
+np.savetxt(f"{outputs_dir}{project_name}_RF_confusion_matrix.csv", rf_confusion_matrix, delimiter=',')
 
-y_pred = clf_rf.predict(X_test)
-np.save(f"{outputs_dir}{project_name}_RF_classification_matric.npy", y_pred)
+y_pred = clf_rf.predict_proba(X)
+np.save(f"{outputs_dir}{project_name}_RF.npy", y_pred)
 

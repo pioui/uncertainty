@@ -12,13 +12,13 @@ np.random.seed(42)
 DO_OVERALL = True
 
 
-def centroid(p):
+def geometry_based_uncertainty(p):
     """
-    @param p :  number of pixels x N probability for each class
-    @return : the centroid of the N-dimentional triangle defined by one-hot encoding points.
+    @param p : np.array(N,C) N pixels x C probability for each class
+    @return : uncertainty claculated with respect of the distance from center of the standard (C-1)-simplex
     """
-    N = p.shape[-1]
-    return 1-np.sqrt(np.sum((p-1/N)**2, axis = 1))/ np.sqrt((1-1/N))
+    C = p.shape[-1]
+    return 1-np.sum((p-1/C)**2, axis = 1)/ (1-1/C)
 
 
 def variance(p):
@@ -33,23 +33,23 @@ def variance(p):
 
     return var/mean
 
-def variance_heterophil(p,w):
+def semantic_based_uncertainty(p,C):
     """
     @param p : np.array(N,C) N pixels x C probability for each class
-    @param w : np.array(C,C) distances of classes / heterophily matrix
+    @param w : np.array(C,C) compatibility / heterophily matrix
     @return : np.array(N) the modified variance of the C-dimentional categorical distribution
     """
-    d = w[p.argmax(1)]
-    return (np.sum(d**2*p, axis =1) - np.sum(d*p, axis = 1)**2)
+    s_ij = C[p.argmax(1)]
+    return (np.sum(**2*p, axis =1) - np.sum(s_ij*p, axis = 1)**2)
 
 
 
-def entropy(p):
+def shannon_entropy(p):
     """
     @param p : np.array(N,C) N pixels x C probability for each class
     @return : np.array(N) the entropy of the N-dimentional categorical distribution
     """
-    p=p+1e-7
+    p=p+1e-10
     N = p.shape[-1]
 
     return -np.sum(p*np.log(p), axis =1)/np.log(N)

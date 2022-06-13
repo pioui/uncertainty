@@ -3,8 +3,9 @@ import os
 
 from uncertainty.datasets import trento_dataset
 
-images_dir = "outputs/images/"
-outputs_dir = "outputs/"
+project_name = "trento"
+images_dir = f"outputs/{project_name}/images/"
+outputs_dir = f"outputs/{project_name}/"
 data_dir = "/home/pigi/data/trento/"
 
 if not os.path.exists(outputs_dir):
@@ -19,5 +20,4 @@ dataset = trento_dataset(
         samples_per_class=samples_per_class
     )
 
-project_name = "Trento_Uncertainty"
 logging.basicConfig(filename = f'{outputs_dir}{project_name}_logs.log')
