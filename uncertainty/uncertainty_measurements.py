@@ -26,12 +26,11 @@ def variance(p):
     @param p : np.array(N,C) N pixels x C probability for each class
     @return : np.array(N) the variance of the N-dimentional categorical distribution
     """
-    N = p.shape[-1]
-    x = np.arange(N)+1
+    C = p.shape[-1]
+    x = np.arange(C)+1
     var = np.sum(x**2*p, axis =1) - np.sum(x*p, axis = 1)**2
-    mean = np.sum(x*p, axis =1)
 
-    return var/mean
+    return 4*var/(C-1)**2
 
 def semantic_based_uncertainty(p,C):
     """
@@ -39,8 +38,10 @@ def semantic_based_uncertainty(p,C):
     @param w : np.array(C,C) compatibility / heterophily matrix
     @return : np.array(N) the modified variance of the C-dimentional categorical distribution
     """
-    s_ij = C[p.argmax(1)]
-    return (np.sum(**2*p, axis =1) - np.sum(s_ij*p, axis = 1)**2)
+    pCC = np.matmul(p,C*C)
+    pCCp = np.matmul(pCC,p)
+    maxVar = np.max(pCCp, axis=1)
+    return pCCp/(2*maxVar)
 
 
 

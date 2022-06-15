@@ -1,15 +1,6 @@
-from email.mime import image
-import pickle
 import matplotlib.pyplot as plt
-from matplotlib import colors
-import matplotlib.patches as mpatches
-from scipy import io
-from sklearn.metrics import confusion_matrix, accuracy_score, balanced_accuracy_score
 import os
 import numpy as np
-import torch
-import tifffile
-import csv
 
 from uncertainty.uncertainty_measurements import geometry_based_uncertainty, variance, shannon_entropy, semantic_based_uncertainty
 
@@ -73,22 +64,22 @@ for project_name in os.listdir('outputs/'):
 
             plt.figure(dpi=500)
             plt.imshow(variance(y_pred_prob).reshape(dataset.shape), cmap='coolwarm', 
-            # vmin=0, vmax=1
+            vmin=0, vmax=1
             )
             plt.axis('off')
             cbar = plt.colorbar(location='top')
             cbar.ax.tick_params(labelsize =8 )
             plt.savefig(f"{images_dir}{model_name}_VARIANCE.png",bbox_inches='tight', pad_inches=0.1 ,dpi=500)
 
-            # plt.figure(dpi=500)
-            # plt.imshow(semantic_based_uncertainty(y_pred_prob).reshape(dataset.shape), cmap='coolwarm', 
-            # vmin=0, vmax=2.25
-            # # vmin=0, vmax=6.25
-            # )
-            # plt.axis('off')
-            # cbar = plt.colorbar(location='top')
-            # cbar.ax.tick_params(labelsize =8 )
-            # plt.savefig(f"{images_dir}{model_name}_SBU.png",bbox_inches='tight', pad_inches=0.1 ,dpi=500)
+            plt.figure(dpi=500)
+            plt.imshow(semantic_based_uncertainty(y_pred_prob).reshape(dataset.shape), cmap='coolwarm', 
+            vmin=0, vmax=2.25
+            # vmin=0, vmax=6.25
+            )
+            plt.axis('off')
+            cbar = plt.colorbar(location='top')
+            cbar.ax.tick_params(labelsize =8 )
+            plt.savefig(f"{images_dir}{model_name}_SBU.png",bbox_inches='tight', pad_inches=0.1 ,dpi=500)
 
             plt.figure(dpi=500)
             plt.imshow(shannon_entropy(y_pred_prob).reshape(dataset.shape), cmap='coolwarm', 
