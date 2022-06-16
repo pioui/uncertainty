@@ -21,3 +21,8 @@ a repository for modified variance as uncertainty measure
 
 #### Calculate and Save Uncertainty maps for all the output/*.npy files
 `python3 scripts/calculate_uncertainties.py`
+
+
+#### To do
+ - correct maximum value for semantic_based_uncertainty and efficient calculation
+ - investigate "distance" measurements 
