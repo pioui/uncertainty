@@ -49,6 +49,15 @@ def semantic_based_uncertainty(p,C):
     maxVar = np.max(Var) 
     return Var/maxVar
 
+def semantic_based_uncertainty_old(p,C):
+    """
+    @param p : np.array(N,C) N pixels x C probability for each class
+    @param w : np.array(C,C) compatibility / heterophily matrix
+    @return : np.array(N) the modified variance of the C-dimentional categorical distribution
+    """
+    s_ij = C[p.argmax(1)]
+    return (np.sum(**2*p, axis =1) - np.sum(s_ij*p, axis = 1)**2)
+
 
 
 def shannon_entropy(p):
