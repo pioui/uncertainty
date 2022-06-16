@@ -1,10 +1,12 @@
 import logging
 import os
+import numpy as np
 
 from uncertainty.datasets import bcss_dataset
 
-images_dir = "outputs/images/"
-outputs_dir = "outputs/"
+project_name = "bcss"
+images_dir = f"outputs/{project_name}/images/"
+outputs_dir = f"outputs/{project_name}/"
 data_dir = "/home/pigi/repos/BCSS/"
 
 if not os.path.exists(outputs_dir):
@@ -14,10 +16,36 @@ if not os.path.exists(images_dir):
     os.makedirs(images_dir)
 
 samples_per_class = 100
-dataset = bcss_Dataset(
+dataset = bcss_dataset(
         data_dir = data_dir,
         samples_per_class=samples_per_class
     )
 
-project_name = "BCSS_Uncertainty"
 logging.basicConfig(filename = f'{outputs_dir}{project_name}_logs.log')
+
+heterophil_matrix = np.array(
+    [
+        [0,3,3,3,3],
+        [1,0,1,1,1],
+        [1,2,0,2,2],
+        [1,1,1,0,1],
+        [1,1,1,1,0],
+    ]
+    )
+
+labels = [
+    "Unknown",
+    "Tumor", 
+    "Stroma", 
+    "Lymphocytic_infiltrate", 
+    "Necrosis or Debris", 
+    "Other", 
+    ]
+color = [
+    "black", 
+    "palegreen", 
+    "lime", 
+    "orchid", 
+    "green", 
+    "steelblue",
+    ]

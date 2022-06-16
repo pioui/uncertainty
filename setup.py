@@ -4,9 +4,7 @@
 from setuptools import setup
 
 requirements = [
-    "matplotlib>=3.0.3",
-    "scikit-learn>=0.20.3",
-    "imageio"
+    "numpy",
 ]
 
 # setup_requirements = [

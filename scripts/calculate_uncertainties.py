@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import os
 import numpy as np
+from matplotlib import colors
 
 from uncertainty.uncertainty_measurements import geometry_based_uncertainty, variance, shannon_entropy, semantic_based_uncertainty
 
@@ -12,18 +13,20 @@ for project_name in os.listdir('outputs/'):
         from trento_config import (
             dataset,
             project_name,
-            data_dir,
             images_dir,
             outputs_dir,
+            heterophil_matrix,
+            color
         )
     elif project_name == 'bcss':
         dataset = 'bcss'
         from bcss_config import (
             dataset,
             project_name,
-            data_dir,
             images_dir,
             outputs_dir,
+            heterophil_matrix,
+            color
         )
 
     else:
@@ -31,7 +34,7 @@ for project_name in os.listdir('outputs/'):
 
     print(project_name)
 
-    _,y =dataset.full_dataset # 15107
+    X,y =dataset.full_dataset # 15107
     y_true = y.reshape(-1)
 
     acc_dict = []
@@ -47,10 +50,24 @@ for project_name in os.listdir('outputs/'):
 
             plt.figure(dpi=500)
             plt.imshow(y_pred.reshape(dataset.shape), interpolation='nearest', 
-            # cmap = colors.ListedColormap(color[1:])
+            cmap = colors.ListedColormap(color[1:])
             )
             plt.axis('off')
             plt.savefig(f"{images_dir}{model_name}_PREDICTIONS.png",bbox_inches='tight', pad_inches=0, dpi=500)
+
+            plt.figure(dpi=500)
+            plt.imshow(y_true.reshape(dataset.shape), interpolation='nearest', 
+            cmap = colors.ListedColormap(color)
+            )
+            plt.axis('off')
+            plt.savefig(f"{images_dir}{model_name}_GT.png",bbox_inches='tight', pad_inches=0, dpi=500)
+
+            # plt.figure(dpi=500)
+            # plt.imshow(X.reshape(500,1500,3), interpolation='nearest', 
+            # # cmap = colors.ListedColormap(color[1:])
+            # )
+            # plt.axis('off')
+            # plt.savefig(f"{images_dir}{model_name}_SCAN.png",bbox_inches='tight', pad_inches=0, dpi=500)
 
             
             plt.figure(dpi=500)
@@ -72,9 +89,8 @@ for project_name in os.listdir('outputs/'):
             plt.savefig(f"{images_dir}{model_name}_VARIANCE.png",bbox_inches='tight', pad_inches=0.1 ,dpi=500)
 
             plt.figure(dpi=500)
-            plt.imshow(semantic_based_uncertainty(y_pred_prob).reshape(dataset.shape), cmap='coolwarm', 
-            vmin=0, vmax=2.25
-            # vmin=0, vmax=6.25
+            plt.imshow(semantic_based_uncertainty(y_pred_prob, heterophil_matrix).reshape(dataset.shape), cmap='coolwarm', 
+            vmin=0, vmax=1
             )
             plt.axis('off')
             cbar = plt.colorbar(location='top')
@@ -83,7 +99,7 @@ for project_name in os.listdir('outputs/'):
 
             plt.figure(dpi=500)
             plt.imshow(shannon_entropy(y_pred_prob).reshape(dataset.shape), cmap='coolwarm', 
-            # vmin=0, vmax=1
+            vmin=0, vmax=1
             )
             plt.axis('off')
             cbar = plt.colorbar(location='top')

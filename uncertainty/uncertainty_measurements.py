@@ -35,13 +35,17 @@ def variance(p):
 def semantic_based_uncertainty(p,C):
     """
     @param p : np.array(N,C) N pixels x C probability for each class
-    @param w : np.array(C,C) compatibility / heterophily matrix
+    @param C : np.array(C,C) compatibility / heterophily matrix
     @return : np.array(N) the modified variance of the C-dimentional categorical distribution
     """
-    pCC = np.matmul(p,C*C)
-    pCCp = np.matmul(pCC,p)
-    maxVar = np.max(pCCp, axis=1)
-    return pCCp/(2*maxVar)
+    #TODO: Something parallel, I don't like this implementation but I am stuck now
+    Var = np.zeros(len(p))
+    for i in range(len(p)):
+        pTCC = np.matmul(p[i],C*C)
+        pTCCp = np.matmul(pTCC,np.transpose(p[i]))
+        Var[i] = pTCCp
+    maxVar = np.max(Var)
+    return Var/(2*maxVar)
 
 
 
