@@ -11,7 +11,6 @@ np.random.seed(42)
 
 DO_OVERALL = True
 
-
 def geometry_based_uncertainty(p):
     """
     @param p : np.array(N,C) N pixels x C probability for each class
@@ -19,7 +18,6 @@ def geometry_based_uncertainty(p):
     """
     C = p.shape[-1]
     return 1-np.sum((p-1/C)**2, axis = 1)/ (1-1/C)
-
 
 def variance(p):
     """
