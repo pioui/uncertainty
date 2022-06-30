@@ -6,7 +6,6 @@ by Saloua & Pigi
 ```
 conda env create -f environment.yml
 conda activate ame
-
 ```
 
 #### Install
@@ -18,11 +17,21 @@ python3 setup.py build install
 pip install -e .
 ```
 
+#### Edit data directories and output at the configurations files :
+
+```
+uncertainty
+│   
+└───scripts
+    │   trento_config.py
+    │   bcss_config.py
+```
+
+
 
 #### Run SVM & RF Classification
 ```
 python3 scripts/classification -d trento
-
 python3 scripts/classification -d bcss
 ```
 
