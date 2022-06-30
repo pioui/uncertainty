@@ -103,5 +103,6 @@ outputs/
 images/
 models/
 
+.ipynb_checkpoints
 
 todo.txt
