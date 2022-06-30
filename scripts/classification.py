@@ -4,8 +4,7 @@ import argparse
 import numpy as np
 import numpy as np
 from sklearn.metrics import confusion_matrix
-
-
+import logging
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -30,34 +29,38 @@ elif dataset == 'trento':
     project_name
 )
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
 X_train,y_train = dataset.train_dataset 
-print(X_train.shape, y_train.shape, np.unique(y_train))
 X_test,y_test = dataset.test_dataset 
-print(X_test.shape, y_test.shape, np.unique(y_test))
 X,y = dataset.full_dataset 
-print(X.shape, y.shape, np.unique(y))
+
+logger.info(f"Train dataset shape: {X_train.shape}, {y_train.shape}, {np.unique(y_train)}")
+logger.info(f"Test dataset shape: {X_test.shape}, {y_test.shape}, {np.unique(y_test)}")
+logger.info(f"Total dataset shape: {X.shape}, {y.shape}, {np.unique(y)}")
 
 # ----- SVM -----#
 
 clf_svm = SVC(
     C=1, 
     kernel="rbf", 
-    verbose=True, 
+    verbose=False, 
     probability=True
     )
 clf_svm.fit(X_train, y_train)
 svm_accuracy = clf_svm.score(X_test, y_test)
-print(f"SVM Accuracy : {svm_accuracy}")
+
 
 y_pred = clf_svm.predict(X_test)
 svm_confusion_matrix = confusion_matrix(y_test, y_pred, normalize='true')
 svm_confusion_matrix = np.around(svm_confusion_matrix.astype('float') / svm_confusion_matrix.sum(axis=1)[:, np.newaxis], decimals=2)
-print(f"Cofusion Matrix: {svm_confusion_matrix}")
-np.savetxt(f"{outputs_dir}{project_name}_SVM_confusion_matrix.csv", svm_confusion_matrix, delimiter=',')
-
 y_pred = clf_svm.predict_proba(X)
-np.save(f"{outputs_dir}{project_name}_SVM.npy", y_pred)
 
+logger.info(f"SVM Accuracy : {svm_accuracy}")
+logger.info(f"Cofusion Matrix: {svm_confusion_matrix}")
+np.savetxt(f"{outputs_dir}{project_name}_SVM_confusion_matrix.csv", svm_confusion_matrix, delimiter=',')
+np.save(f"{outputs_dir}{project_name}_SVM.npy", y_pred)
 
 # # # ----- RF -----#
 
@@ -68,19 +71,20 @@ clf_rf = RandomForestClassifier(
     min_samples_split=5,
     bootstrap=True,
     max_features="sqrt",
-    verbose=True
+    verbose=False
 )
 
 clf_rf.fit(X_train, y_train)
 rf_accuracy = clf_rf.score(X_test, y_test)
-print(f"RF Accuracy : {rf_accuracy}")
 
 y_pred = clf_rf.predict(X_test)
 rf_confusion_matrix = confusion_matrix(y_test, y_pred, normalize='true')
 rf_confusion_matrix = np.around(rf_confusion_matrix.astype('float') / rf_confusion_matrix.sum(axis=1)[:, np.newaxis], decimals=2)
-print(f"Cofusion Matrix: {rf_confusion_matrix}")
-np.savetxt(f"{outputs_dir}{project_name}_RF_confusion_matrix.csv", rf_confusion_matrix, delimiter=',')
 
 y_pred = clf_rf.predict_proba(X)
+
+logger.info(f"RF Accuracy : {rf_accuracy}")
+logger.info(f"Cofusion Matrix: {rf_confusion_matrix}")
+np.savetxt(f"{outputs_dir}{project_name}_RF_confusion_matrix.csv", rf_confusion_matrix, delimiter=',')
 np.save(f"{outputs_dir}{project_name}_RF.npy", y_pred)
 

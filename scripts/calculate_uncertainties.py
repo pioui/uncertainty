@@ -3,9 +3,13 @@ import os
 import numpy as np
 from matplotlib import colors
 
-from uncertainty.uncertainty_measurements import geometry_based_uncertainty, variance, shannon_entropy, semantic_based_uncertainty
+from uncertainty.uncertainty_measurements import (
+    geometry_based_uncertainty, 
+    variance, 
+    shannon_entropy, 
+    semantic_based_uncertainty
+)
 
-print(os.listdir('outputs/'))
 
 for project_name in os.listdir('outputs/'):
     if project_name == 'trento':
@@ -32,19 +36,16 @@ for project_name in os.listdir('outputs/'):
     else:
         continue
 
-    print(project_name)
 
     X,y =dataset.full_dataset # 15107
     y_true = y.reshape(-1)
 
     acc_dict = []
     for file in os.listdir(os.path.join(outputs_dir)):
-        print(file)
         if os.path.splitext(file)[-1].lower()=='.npy':
             model_name = file.split("_")[1].split(".")[0]
 
             y_pred_prob = np.load(os.path.join(outputs_dir,file))
-            print(y_pred_prob.shape)
             y_pred_max_prob = y_pred_prob.max(1)
             y_pred = y_pred_prob.argmax(1)+1
 
@@ -90,7 +91,7 @@ for project_name in os.listdir('outputs/'):
 
             plt.figure(dpi=500)
             plt.imshow(semantic_based_uncertainty(y_pred_prob, heterophil_matrix).reshape(dataset.shape), cmap='coolwarm', 
-            vmin=0, vmax=1
+            # vmin=0, vmax=1
             )
             plt.axis('off')
             cbar = plt.colorbar(location='top')

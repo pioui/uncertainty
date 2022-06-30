@@ -8,8 +8,8 @@ import random
 from uncertainty.utils import normalize
 
 random.seed(42)
-# logger = logging.getLogger(__name__)
-# logger.setLevel(logging.DEBUG)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 class trento_dataset():
     def __init__(
@@ -39,9 +39,6 @@ class trento_dataset():
         y_all = y
         y_all = y_all.reshape(-1) # [99600]
 
-        print(x_all.shape, y_all.shape)
-        print(f"HERE{np.unique(y_all)}")
-
         train_inds = []
         for label in np.unique(y_all):
             label_ind = np.where(y_all == label)[0]
@@ -62,24 +59,24 @@ class trento_dataset():
         ) # 0 to 5
 
         self.train_dataset = (x_train, y_train) # 1 to 5
-        print(x_train.shape, y_train.shape, np.unique(y_train))
+        logger.info(f"Train dataset shape: {x_train.shape}, {y_train.shape}, {np.unique(y_train)}")
         for l in np.unique(y_train):
-            print(f'Label {l}: {np.sum(y_train==l)}')
+            logger.info(f'Label {l}: {np.sum(y_train==l)}')
 
         self.test_dataset = (x_test, y_test) # 1 to 5
-        print(x_test.shape, y_test.shape, np.unique(y))
+        logger.info(f"Test dataset shape: {x_test.shape}, {y_test.shape}, {np.unique(y)}")
         for l in np.unique(y_test):
-            print(f'Label {l}: {np.sum(y_test==l)}')
+            logger.info(f'Label {l}: {np.sum(y_test==l)}')
 
         self.full_dataset = (x_all, y_all) # 1 to 5
-        print(x_all.shape, y_all.shape, np.unique(y_all))
+        logger.info(f"Dataset shape: {x_all.shape}, {y_all.shape}, {np.unique(y_all)}")
         for l in np.unique(y_all):
-            print(f'Label {l}: {np.sum(y_all==l)}')
+            logger.info(f'Label {l}: {np.sum(y_all==l)}')
 
 
 if __name__ == "__main__":
 
-    DATASET = trentoDataset(
+    DATASET = trento_dataset(
         data_dir = "/home/pigi/data/trento/",
     )
     x,y = DATASET.train_dataset # 819

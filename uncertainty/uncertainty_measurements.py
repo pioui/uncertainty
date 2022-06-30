@@ -44,8 +44,9 @@ def semantic_based_uncertainty(p,C):
         Var[i] = pTCCp
     
     #TODO: we need the general maximum
-    maxVar = np.max(Var) 
-    return Var/maxVar
+    # maxVar = np.max(Var) 
+    return Var
+    # /maxVar
 
 def semantic_based_uncertainty_old(p,C):
     """
