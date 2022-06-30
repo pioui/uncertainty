@@ -31,8 +31,8 @@ uncertainty
 
 #### Run SVM & RF Classification
 ```
-python3 scripts/classification -d trento
-python3 scripts/classification -d bcss
+python3 scripts/classification.py -d trento
+python3 scripts/classification.py -d bcss
 ```
 
 #### Calculate and Save Uncertainty maps for all the output/*.npy files
@@ -40,7 +40,7 @@ python3 scripts/classification -d bcss
 python3 scripts/calculate_uncertainties.py
 ```
 
-Output .npy, logs and uncertainty images files are saved at :
+### Output .npy, logs and uncertainty images files are saved at :
 
 ```
 uncertainty
