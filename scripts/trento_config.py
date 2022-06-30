@@ -54,3 +54,10 @@ color = [
     "green",
     "yellow"
     ]
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+logger.info(f"Project name: {project_name} ")
+logger.info(f"Labels: {labels} ")
+logger.info(f"Labels' colors: {color} ")
+logger.info(f"Heterophily Matrix: {heterophil_matrix}")
