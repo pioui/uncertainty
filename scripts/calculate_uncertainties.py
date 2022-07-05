@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import os
 import numpy as np
 from matplotlib import colors
+from uncertainty.compatibility_matrix import calculate_compatibility_matrix
 
 from uncertainty.uncertainty_measurements import (
     geometry_based_uncertainty, 
@@ -90,15 +91,6 @@ for project_name in os.listdir('outputs/'):
             plt.savefig(f"{images_dir}{model_name}_VARIANCE.png",bbox_inches='tight', pad_inches=0.1 ,dpi=500)
 
             plt.figure(dpi=500)
-            plt.imshow(semantic_based_uncertainty(y_pred_prob, compatibility_matrix).reshape(dataset.shape), cmap='coolwarm', 
-            # vmin=0, vmax=1
-            )
-            plt.axis('off')
-            cbar = plt.colorbar(location='top')
-            cbar.ax.tick_params(labelsize =8 )
-            plt.savefig(f"{images_dir}{model_name}_SBU.png",bbox_inches='tight', pad_inches=0.1 ,dpi=500)
-
-            plt.figure(dpi=500)
             plt.imshow(shannon_entropy(y_pred_prob).reshape(dataset.shape), cmap='coolwarm', 
             vmin=0, vmax=1
             )
@@ -110,5 +102,40 @@ for project_name in os.listdir('outputs/'):
 
 
         
+
+            plt.figure(dpi=500)
+            plt.imshow(semantic_based_uncertainty(y_pred_prob, compatibility_matrix).reshape(dataset.shape), cmap='coolwarm', 
+            # vmin=0, vmax=1
+            )
+            plt.axis('off')
+            cbar = plt.colorbar(location='top')
+            cbar.ax.tick_params(labelsize =8 )
+            plt.savefig(f"{images_dir}{model_name}_SBU_manual.png",bbox_inches='tight', pad_inches=0.1 ,dpi=500)
+
+
+            compatibility_matrix=calculate_compatibility_matrix(X,y, "wasserstein")
+            if project_name=="trento":compatibility_matrix=compatibility_matrix[1:,1:]
+            plt.figure(dpi=500)
+            plt.imshow(semantic_based_uncertainty(y_pred_prob, compatibility_matrix).reshape(dataset.shape), cmap='coolwarm', 
+            # vmin=0, vmax=1
+            )
+            plt.axis('off')
+            cbar = plt.colorbar(location='top')
+            cbar.ax.tick_params(labelsize =8 )
+            plt.savefig(f"{images_dir}{model_name}_SBU_wasserstein.png",bbox_inches='tight', pad_inches=0.1 ,dpi=500)
+
+
+
+
+            compatibility_matrix=calculate_compatibility_matrix(X,y, "energy")
+            if project_name=="trento":compatibility_matrix=compatibility_matrix[1:,1:]
+            plt.figure(dpi=500)
+            plt.imshow(semantic_based_uncertainty(y_pred_prob, compatibility_matrix).reshape(dataset.shape), cmap='coolwarm', 
+            # vmin=0, vmax=1
+            )
+            plt.axis('off')
+            cbar = plt.colorbar(location='top')
+            cbar.ax.tick_params(labelsize =8 )
+            plt.savefig(f"{images_dir}{model_name}_SBU_energy.png",bbox_inches='tight', pad_inches=0.1 ,dpi=500)
 
 
