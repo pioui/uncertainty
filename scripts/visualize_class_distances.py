@@ -16,12 +16,14 @@ dataset_name = args.dataset
 if dataset_name == 'bcss':
     from bcss_config import (
     dataset,
-    compatibility_matrix
+    compatibility_matrix,
+    images_dir
 )
 elif dataset_name == 'trento':
     from trento_config import (
     dataset,
-    compatibility_matrix
+    compatibility_matrix,
+    images_dir
 )
 
 
@@ -37,7 +39,7 @@ plt.yticks(np.arange(0,dataset.n_classes-1,1), range(1,dataset.n_classes))
 for k in range (len(compatibility_matrix)):
     for l in range(len(compatibility_matrix[k])):
         plt.text(k,l,str(compatibility_matrix[k][l]), va='center', ha='center', fontsize='small') # trento
-plt.savefig(f"{dataset_name}_compatibility_manual.png",bbox_inches='tight', pad_inches=0.2, dpi=500)
+plt.savefig(f"{images_dir}{dataset_name}_compatibility_manual.png",bbox_inches='tight', pad_inches=0.2, dpi=500)
 
 compatibility_matrix = calculate_compatibility_matrix(X,y,"wasserstein")
 print(compatibility_matrix)
@@ -49,7 +51,7 @@ plt.yticks(np.arange(0,dataset.n_classes-1,1), range(1,dataset.n_classes))
 for k in range (len(compatibility_matrix)):
     for l in range(len(compatibility_matrix[k])):
         plt.text(k,l,str(compatibility_matrix[k][l]), va='center', ha='center', fontsize='small') # trento
-plt.savefig(f"{dataset_name}_compatibility_wasserstein.png",bbox_inches='tight', pad_inches=0.2, dpi=500)
+plt.savefig(f"{images_dir}{dataset_name}_compatibility_wasserstein.png",bbox_inches='tight', pad_inches=0.2, dpi=500)
 
 compatibility_matrix = calculate_compatibility_matrix(X,y,"energy")
 print(compatibility_matrix)
@@ -61,7 +63,7 @@ plt.yticks(np.arange(0,dataset.n_classes-1,1), range(1,dataset.n_classes))
 for k in range (len(compatibility_matrix)):
     for l in range(len(compatibility_matrix[k])):
         plt.text(k,l,str(compatibility_matrix[k][l]), va='center', ha='center', fontsize='small') # trento
-plt.savefig(f"{dataset_name}_compatibility_energy.png",bbox_inches='tight', pad_inches=0.2, dpi=500)
+plt.savefig(f"{images_dir}{dataset_name}_compatibility_energy.png",bbox_inches='tight', pad_inches=0.2, dpi=500)
 
 
 
