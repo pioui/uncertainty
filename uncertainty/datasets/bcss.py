@@ -30,6 +30,7 @@ class bcss_dataset():
         x = np.array(imageio.imread(data_dir+"images/TCGA-AR-A1AQ-DX1_xmin18171_ymin38296_MPP-0.2500.png"))# [2260, 2545, 3]
         y = np.array(imageio.imread(data_dir+"masks/TCGA-AR-A1AQ-DX1_xmin18171_ymin38296_MPP-0.2500.png"), dtype = np.int64)# [2260, 2545]
         self.shape = y.shape
+        self.n_classes = len(np.unique(y))
 
         # x_all = np.moveaxis(x, -1, 0) # [3, 2260, 2545]
         x_all = x.reshape(-1,x.shape[-1]) # [3, 6439719]

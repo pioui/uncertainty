@@ -25,7 +25,7 @@ dataset = trento_dataset(
 logging.basicConfig(filename = f'{outputs_dir}{project_name}_logs.log')
 
 
-heterophil_matrix = np.array(
+compatibility_matrix = np.array(
     [
         [0,3,3,2,1,3],
         [3,0,3,3,3,2],
@@ -60,4 +60,4 @@ logger.setLevel(logging.DEBUG)
 logger.info(f"Project name: {project_name} ")
 logger.info(f"Labels: {labels} ")
 logger.info(f"Labels' colors: {color} ")
-logger.info(f"Heterophily Matrix: {heterophil_matrix}")
+logger.info(f"compatibilityy Matrix: {compatibility_matrix}")

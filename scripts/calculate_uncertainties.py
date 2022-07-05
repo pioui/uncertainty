@@ -19,7 +19,7 @@ for project_name in os.listdir('outputs/'):
             project_name,
             images_dir,
             outputs_dir,
-            heterophil_matrix,
+            compatibility_matrix,
             color
         )
     elif project_name == 'bcss':
@@ -29,7 +29,7 @@ for project_name in os.listdir('outputs/'):
             project_name,
             images_dir,
             outputs_dir,
-            heterophil_matrix,
+            compatibility_matrix,
             color
         )
 
@@ -90,7 +90,7 @@ for project_name in os.listdir('outputs/'):
             plt.savefig(f"{images_dir}{model_name}_VARIANCE.png",bbox_inches='tight', pad_inches=0.1 ,dpi=500)
 
             plt.figure(dpi=500)
-            plt.imshow(semantic_based_uncertainty(y_pred_prob, heterophil_matrix).reshape(dataset.shape), cmap='coolwarm', 
+            plt.imshow(semantic_based_uncertainty(y_pred_prob, compatibility_matrix).reshape(dataset.shape), cmap='coolwarm', 
             # vmin=0, vmax=1
             )
             plt.axis('off')

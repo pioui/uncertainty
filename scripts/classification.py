@@ -14,15 +14,15 @@ parser.add_argument(
     )
 
 args = parser.parse_args()
-dataset = args.dataset    
+dataset_name = args.dataset    
     
-if dataset == 'bcss':
+if dataset_name == 'bcss':
     from bcss_config import (
     dataset,
     outputs_dir,
     project_name
 )
-elif dataset == 'trento':
+elif dataset_name == 'trento':
     from trento_config import (
     dataset,
     outputs_dir,

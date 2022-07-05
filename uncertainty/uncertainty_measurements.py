@@ -33,7 +33,7 @@ def variance(p):
 def semantic_based_uncertainty(p,C):
     """
     @param p : np.array(N,C) N pixels x C probability for each class
-    @param C : np.array(C,C) compatibility / heterophily matrix
+    @param C : np.array(C,C) compatibility / compatibilityy matrix
     @return : np.array(N) the modified variance of the C-dimentional categorical distribution
     """
     #TODO: Something parallel, I don't like this implementation but I am stuck now
@@ -51,7 +51,7 @@ def semantic_based_uncertainty(p,C):
 def semantic_based_uncertainty_old(p,C):
     """
     @param p : np.array(N,C) N pixels x C probability for each class
-    @param w : np.array(C,C) compatibility / heterophily matrix
+    @param w : np.array(C,C) compatibility / compatibilityy matrix
     @return : np.array(N) the modified variance of the C-dimentional categorical distribution
     """
     s_ij = C[p.argmax(1)]
