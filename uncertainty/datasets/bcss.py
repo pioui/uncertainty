@@ -30,7 +30,6 @@ class bcss_dataset():
         x = np.array(imageio.imread(data_dir+"images/TCGA-AR-A1AQ-DX1_xmin18171_ymin38296_MPP-0.2500.png"))# [2260, 2545, 3]
         y = np.array(imageio.imread(data_dir+"masks/TCGA-AR-A1AQ-DX1_xmin18171_ymin38296_MPP-0.2500.png"), dtype = np.int64)# [2260, 2545]
         self.shape = y.shape
-        self.n_classes = len(np.unique(y))
 
         # x_all = np.moveaxis(x, -1, 0) # [3, 2260, 2545]
         x_all = x.reshape(-1,x.shape[-1]) # [3, 6439719]
@@ -43,6 +42,7 @@ class bcss_dataset():
 
 
         y_all = label_schema[y_all.reshape(-1)] # [6439719] 0 to 5
+        self.n_classes = len(np.unique(y_all))
 
         train_inds = []
         for label in np.unique(y_all):
@@ -63,17 +63,17 @@ class bcss_dataset():
             x_all_train, y_all_train, train_size = train_size, random_state = 42, stratify = y_all_train
         ) # 0 to 5
 
-        self.train_dataset = (x_train, y_train) # 1 to 5
+        self.train_dataset = (x_train, y_train-1) # 1 to 5
         logger.info(f"Train dataset shape: {x_train.shape}, {y_train.shape}, {np.unique(y_train)}")
         for l in np.unique(y_train):
             logger.info(f'Label {l}: {np.sum(y_train==l)}')
 
-        self.test_dataset = (x_test, y_test) # 1 to 5
+        self.test_dataset = (x_test, y_test-1) # 1 to 5
         logger.info(f"Test dataset shape: {x_test.shape}, {y_test.shape}, {np.unique(y)}")
         for l in np.unique(y_test):
             logger.info(f'Label {l}: {np.sum(y_test==l)}')
 
-        self.full_dataset = (x_all, y_all) # 1 to 5
+        self.full_dataset = (x_all, y_all-1) # 1 to 5
         logger.info(f"Dataset shape: {x_all.shape}, {y_all.shape}, {np.unique(y_all)}")
         for l in np.unique(y_all):
             logger.info(f'Label {l}: {np.sum(y_all==l)}')

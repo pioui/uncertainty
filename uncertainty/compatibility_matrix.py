@@ -24,4 +24,4 @@ def calculate_compatibility_matrix(X,y, distance_name):
             classj = X[y==j]    
             C[i,j] = calculate_class_distance(classi, classj, distance_name)
             C[j,i] = C[i,j]
-    return C[1:,1:]
+    return C
