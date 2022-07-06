@@ -25,6 +25,7 @@ uncertainty
 └───scripts
     │   trento_config.py
     │   bcss_config.py
+    |   bcss_patched_config.py
 ```
 
 
@@ -33,6 +34,7 @@ uncertainty
 ```
 python3 scripts/classification.py -d trento
 python3 scripts/classification.py -d bcss
+python3 scripts/classification.py -d bcss_patched
 ```
 
 #### Calculate and Save Uncertainty maps for all the output/*.npy files
@@ -53,8 +55,13 @@ uncertainty
     │   └───images
     │   
     └───bcss
-        │   bcss.logs
-        │   bcss.npy
+    |   │   bcss.logs
+    |   │   bcss.npy
+    |   └───images
+    |
+    └───bcss_pached
+        │   bcss_pached.logs
+        │   bcss_pached.npy
         └───images
 ```
 
