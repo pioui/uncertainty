@@ -16,7 +16,7 @@ label_schema = np.array(
 )
 
 
-class bcss_dataset:
+class bcss_patched_dataset:
     def __init__(
         self, data_dir, samples_per_class=500, train_size=0.5, do_preprocess=True,
         patch_size = 5
@@ -110,7 +110,7 @@ class bcss_dataset:
 
 if __name__ == "__main__":
 
-    DATASET = bcss_dataset(data_dir="/home/pigi/repos/BCSS/")
+    DATASET = bcss_patched_dataset(data_dir="/home/pigi/repos/BCSS/")
 
     x, y = DATASET.full_dataset   
     print(x.shape, y.shape, np.unique(y))

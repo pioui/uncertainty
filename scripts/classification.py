@@ -16,6 +16,8 @@ dataset_name = args.dataset
 
 if dataset_name == "bcss":
     from bcss_config import dataset, outputs_dir, project_name
+elif dataset_name == "bcss_patched":
+    from bcss_patched_config import dataset, outputs_dir, project_name
 elif dataset_name == "trento":
     from trento_config import dataset, outputs_dir, project_name
 
