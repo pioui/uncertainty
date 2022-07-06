@@ -1,0 +1,7 @@
+
+name: uncertainty
+dependencies:
+  - imageio
+  - scikit-learn
+  - tifffile
+  - matplotlib
