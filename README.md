@@ -5,7 +5,7 @@ by Saloua & Pigi
 #### Create conda envirioment
 ```
 conda env create -f environment.yml
-conda activate ame
+conda activate uncertainty
 ```
 
 #### Install
