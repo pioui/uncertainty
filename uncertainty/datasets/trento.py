@@ -90,11 +90,19 @@ class trento_dataset:
 if __name__ == "__main__":
 
     DATASET = trento_dataset(data_dir="/home/pigi/data/trento/")
-    x, y = DATASET.train_dataset  # 819
-    print(x.shape, y.shape, np.unique(y))
 
-    x, y = DATASET.test_dataset  # 15107
+    x, y = DATASET.full_dataset  # [5731136] 0 to 20
     print(x.shape, y.shape, np.unique(y))
+    for l in np.unique(y):
+        print(f"Label {l}: {np.sum(y==l)}")
 
-    x, y = DATASET.full_dataset  # 15107
+    x, y = DATASET.train_dataset  # [1719340] -1 to 19
     print(x.shape, y.shape, np.unique(y))
+    for l in np.unique(y):
+        print(f"Label {l}: {np.sum(y==l)}")
+
+    x, y = DATASET.test_dataset  # [4011796] -1 to 19
+    print(x.shape, y.shape, np.unique(y))
+    for l in np.unique(y):
+        print(f"Label {l}: {np.sum(y==l)}")
+

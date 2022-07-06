@@ -25,6 +25,8 @@ def calculate_compatibility_matrix(X, y, distance_name):
         for j in range(i, classes):
             classi = X[y == i]
             classj = X[y == j]
+            print(i,j, classi.shape,classj.shape)
+
             C[i, j] = calculate_class_distance(classi, classj, distance_name)
             C[j, i] = C[i, j]
     return C
