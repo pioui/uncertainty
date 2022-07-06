@@ -24,12 +24,12 @@ class bcss_dataset:
 
         x = np.array(
             imageio.imread(
-                data_dir + "images/TCGA-AR-A1AQ-DX1_xmin18171_ymin38296_MPP-0.2500.png"
+                data_dir + "images/TCGA-D8-A1JG-DX1_xmin15677_ymin69205_MPP-0.2500.png"
             )
         )  # [2260, 2545, 3]
         y = np.array(
             imageio.imread(
-                data_dir + "masks/TCGA-AR-A1AQ-DX1_xmin18171_ymin38296_MPP-0.2500.png"
+                data_dir + "masks/TCGA-D8-A1JG-DX1_xmin15677_ymin69205_MPP-0.2500.png"
             ),
             dtype=np.int64,
         )  # [2260, 2545]
@@ -43,8 +43,10 @@ class bcss_dataset:
             x_all = normalize(x_all)
         y_all = y
         y_all = y_all.reshape(-1)  # [6439719]
-
+        print(np.unique(y_all))
         y_all = label_schema[y_all.reshape(-1)]  # [6439719] 0 to 5
+        print(np.unique(y_all))
+
         self.n_classes = len(np.unique(y_all))
 
         train_inds = []
@@ -68,16 +70,16 @@ class bcss_dataset:
             train_size=train_size,
             random_state=42,
             stratify=y_all_train,
-        )  # 0 to 5
+        )  
 
-        self.train_dataset = (x_train, y_train - 1)  # 0 to 5
+        self.train_dataset = (x_train, y_train)  
         logger.info(
             f"Train dataset shape: {x_train.shape}, {y_train.shape}, {np.unique(y_train)}"
         )
         for l in np.unique(y_train):
             logger.info(f"Label {l}: {np.sum(y_train==l)}")
 
-        self.test_dataset = (x_test, y_test - 1)  # 0 to 5
+        self.test_dataset = (x_test, y_test )  
         logger.info(
             f"Test dataset shape: {x_test.shape}, {y_test.shape}, {np.unique(y)}"
         )
@@ -94,17 +96,17 @@ if __name__ == "__main__":
 
     DATASET = bcss_dataset(data_dir="/home/pigi/repos/BCSS/")
 
-    x, y = DATASET.full_dataset  # [5731136] 0 to 20
+    x, y = DATASET.full_dataset   
     print(x.shape, y.shape, np.unique(y))
     for l in np.unique(y):
         print(f"Label {l}: {np.sum(y==l)}")
 
-    x, y = DATASET.train_dataset  # [1719340] -1 to 19
+    x, y = DATASET.train_dataset  
     print(x.shape, y.shape, np.unique(y))
     for l in np.unique(y):
         print(f"Label {l}: {np.sum(y==l)}")
 
-    x, y = DATASET.test_dataset  # [4011796] -1 to 19
+    x, y = DATASET.test_dataset   
     print(x.shape, y.shape, np.unique(y))
     for l in np.unique(y):
         print(f"Label {l}: {np.sum(y==l)}")
