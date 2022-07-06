@@ -49,28 +49,20 @@ for project_name in os.listdir('outputs/'):
             y_pred_prob = np.load(os.path.join(outputs_dir,file))
             y_pred_max_prob = y_pred_prob.max(1)
             y_pred = y_pred_prob.argmax(1)+1
-
             plt.figure(dpi=500)
             plt.imshow(y_pred.reshape(dataset.shape), interpolation='nearest', 
             cmap = colors.ListedColormap(color[1:])
             )
             plt.axis('off')
             plt.savefig(f"{images_dir}{model_name}_PREDICTIONS.png",bbox_inches='tight', pad_inches=0, dpi=500)
-
+            
+            y_true[0]=0
             plt.figure(dpi=500)
             plt.imshow(y_true.reshape(dataset.shape), interpolation='nearest', 
             cmap = colors.ListedColormap(color)
             )
             plt.axis('off')
             plt.savefig(f"{images_dir}{model_name}_GT.png",bbox_inches='tight', pad_inches=0, dpi=500)
-
-            # plt.figure(dpi=500)
-            # plt.imshow(X.reshape(500,1500,3), interpolation='nearest', 
-            # # cmap = colors.ListedColormap(color[1:])
-            # )
-            # plt.axis('off')
-            # plt.savefig(f"{images_dir}{model_name}_SCAN.png",bbox_inches='tight', pad_inches=0, dpi=500)
-
             
             plt.figure(dpi=500)
             plt.imshow(geometry_based_uncertainty(y_pred_prob).reshape(dataset.shape), cmap='coolwarm', 

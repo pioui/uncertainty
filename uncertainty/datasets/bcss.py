@@ -63,17 +63,17 @@ class bcss_dataset():
             x_all_train, y_all_train, train_size = train_size, random_state = 42, stratify = y_all_train
         ) # 0 to 5
 
-        self.train_dataset = (x_train, y_train-1) # 1 to 5
+        self.train_dataset = (x_train, y_train-1) # 0 to 5
         logger.info(f"Train dataset shape: {x_train.shape}, {y_train.shape}, {np.unique(y_train)}")
         for l in np.unique(y_train):
             logger.info(f'Label {l}: {np.sum(y_train==l)}')
 
-        self.test_dataset = (x_test, y_test-1) # 1 to 5
+        self.test_dataset = (x_test, y_test-1) # 0 to 5
         logger.info(f"Test dataset shape: {x_test.shape}, {y_test.shape}, {np.unique(y)}")
         for l in np.unique(y_test):
             logger.info(f'Label {l}: {np.sum(y_test==l)}')
 
-        self.full_dataset = (x_all, y_all-1) # 1 to 5
+        self.full_dataset = (x_all, y_all) # 0 to 5
         logger.info(f"Dataset shape: {x_all.shape}, {y_all.shape}, {np.unique(y_all)}")
         for l in np.unique(y_all):
             logger.info(f'Label {l}: {np.sum(y_all==l)}')
