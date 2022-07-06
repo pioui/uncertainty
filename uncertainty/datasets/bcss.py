@@ -12,36 +12,39 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 label_schema = np.array(
-    [
-        0,1,2,3,4, # wanted labels
-        5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
-    ]
+    [0, 1, 2, 3, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]  # wanted labels
 )
-class bcss_dataset():
+
+
+class bcss_dataset:
     def __init__(
-        self,
-        data_dir,
-        samples_per_class=500,
-        train_size=0.5,
-        do_preprocess=True,
+        self, data_dir, samples_per_class=500, train_size=0.5, do_preprocess=True
     ) -> None:
         super().__init__()
 
-        x = np.array(imageio.imread(data_dir+"images/TCGA-AR-A1AQ-DX1_xmin18171_ymin38296_MPP-0.2500.png"))# [2260, 2545, 3]
-        y = np.array(imageio.imread(data_dir+"masks/TCGA-AR-A1AQ-DX1_xmin18171_ymin38296_MPP-0.2500.png"), dtype = np.int64)# [2260, 2545]
+        x = np.array(
+            imageio.imread(
+                data_dir + "images/TCGA-AR-A1AQ-DX1_xmin18171_ymin38296_MPP-0.2500.png"
+            )
+        )  # [2260, 2545, 3]
+        y = np.array(
+            imageio.imread(
+                data_dir + "masks/TCGA-AR-A1AQ-DX1_xmin18171_ymin38296_MPP-0.2500.png"
+            ),
+            dtype=np.int64,
+        )  # [2260, 2545]
         self.shape = y.shape
 
         # x_all = np.moveaxis(x, -1, 0) # [3, 2260, 2545]
-        x_all = x.reshape(-1,x.shape[-1]) # [3, 6439719]
+        x_all = x.reshape(-1, x.shape[-1])  # [3, 6439719]
         # x_all = x_all.transpose(1,0) # [6439719, 3]
 
-        if do_preprocess: 
+        if do_preprocess:
             x_all = normalize(x_all)
         y_all = y
-        y_all = y_all.reshape(-1) # [6439719]
+        y_all = y_all.reshape(-1)  # [6439719]
 
-
-        y_all = label_schema[y_all.reshape(-1)] # [6439719] 0 to 5
+        y_all = label_schema[y_all.reshape(-1)]  # [6439719] 0 to 5
         self.n_classes = len(np.unique(y_all))
 
         train_inds = []
@@ -58,43 +61,50 @@ class bcss_dataset():
 
         x_all_train = x_all[train_inds]
         y_all_train = y_all[train_inds]
-        
+
         x_train, x_test, y_train, y_test = train_test_split(
-            x_all_train, y_all_train, train_size = train_size, random_state = 42, stratify = y_all_train
-        ) # 0 to 5
+            x_all_train,
+            y_all_train,
+            train_size=train_size,
+            random_state=42,
+            stratify=y_all_train,
+        )  # 0 to 5
 
-        self.train_dataset = (x_train, y_train-1) # 0 to 5
-        logger.info(f"Train dataset shape: {x_train.shape}, {y_train.shape}, {np.unique(y_train)}")
+        self.train_dataset = (x_train, y_train - 1)  # 0 to 5
+        logger.info(
+            f"Train dataset shape: {x_train.shape}, {y_train.shape}, {np.unique(y_train)}"
+        )
         for l in np.unique(y_train):
-            logger.info(f'Label {l}: {np.sum(y_train==l)}')
+            logger.info(f"Label {l}: {np.sum(y_train==l)}")
 
-        self.test_dataset = (x_test, y_test-1) # 0 to 5
-        logger.info(f"Test dataset shape: {x_test.shape}, {y_test.shape}, {np.unique(y)}")
+        self.test_dataset = (x_test, y_test - 1)  # 0 to 5
+        logger.info(
+            f"Test dataset shape: {x_test.shape}, {y_test.shape}, {np.unique(y)}"
+        )
         for l in np.unique(y_test):
-            logger.info(f'Label {l}: {np.sum(y_test==l)}')
+            logger.info(f"Label {l}: {np.sum(y_test==l)}")
 
-        self.full_dataset = (x_all, y_all) # 0 to 5
+        self.full_dataset = (x_all, y_all)  # 0 to 5
         logger.info(f"Dataset shape: {x_all.shape}, {y_all.shape}, {np.unique(y_all)}")
         for l in np.unique(y_all):
-            logger.info(f'Label {l}: {np.sum(y_all==l)}')
+            logger.info(f"Label {l}: {np.sum(y_all==l)}")
+
 
 if __name__ == "__main__":
 
-    DATASET = bcss_dataset(
-        data_dir = "/home/pigi/repos/BCSS/",
-    )
+    DATASET = bcss_dataset(data_dir="/home/pigi/repos/BCSS/")
 
-    x,y = DATASET.full_dataset # [5731136] 0 to 20
+    x, y = DATASET.full_dataset  # [5731136] 0 to 20
     print(x.shape, y.shape, np.unique(y))
     for l in np.unique(y):
-        print(f'Label {l}: {np.sum(y==l)}')
+        print(f"Label {l}: {np.sum(y==l)}")
 
-    x,y = DATASET.train_dataset # [1719340] -1 to 19
-    print(x.shape, y.shape, np.unique(y)) 
-    for l in np.unique(y):
-        print(f'Label {l}: {np.sum(y==l)}')
-
-    x,y = DATASET.test_dataset # [4011796] -1 to 19
+    x, y = DATASET.train_dataset  # [1719340] -1 to 19
     print(x.shape, y.shape, np.unique(y))
     for l in np.unique(y):
-        print(f'Label {l}: {np.sum(y==l)}')
+        print(f"Label {l}: {np.sum(y==l)}")
+
+    x, y = DATASET.test_dataset  # [4011796] -1 to 19
+    print(x.shape, y.shape, np.unique(y))
+    for l in np.unique(y):
+        print(f"Label {l}: {np.sum(y==l)}")

@@ -16,39 +16,29 @@ if not os.path.exists(images_dir):
     os.makedirs(images_dir)
 
 samples_per_class = 100
-dataset = bcss_dataset(
-        data_dir = data_dir,
-        samples_per_class=samples_per_class
-    )
+dataset = bcss_dataset(data_dir=data_dir, samples_per_class=samples_per_class)
 
-logging.basicConfig(filename = f'{outputs_dir}{project_name}_logs.log')
+logging.basicConfig(filename=f"{outputs_dir}{project_name}_logs.log")
 
 compatibility_matrix = np.array(
     [
-        [0,1,1,1,3],
-        [1,0,1,1,3],
-        [1,1,0,1,3],
-        [1,1,1,0,3],
-        [3,3,3,3,0],
+        [0, 1, 1, 1, 3],
+        [1, 0, 1, 1, 3],
+        [1, 1, 0, 1, 3],
+        [1, 1, 1, 0, 3],
+        [3, 3, 3, 3, 0],
     ]
-    )
+)
 
 labels = [
     "Unknown",
-    "Tumor", 
-    "Stroma", 
-    "Lymphocytic_infiltrate", 
-    "Necrosis or Debris", 
-    "Other", 
-    ]
-color = [
-    "black", 
-    "palegreen", 
-    "lime", 
-    "orchid", 
-    "green", 
-    "steelblue",
-    ]
+    "Tumor",
+    "Stroma",
+    "Lymphocytic_infiltrate",
+    "Necrosis or Debris",
+    "Other",
+]
+color = ["black", "palegreen", "lime", "orchid", "green", "steelblue"]
 
 
 logger = logging.getLogger(__name__)

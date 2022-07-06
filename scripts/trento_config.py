@@ -17,43 +17,24 @@ if not os.path.exists(images_dir):
     os.makedirs(images_dir)
 
 samples_per_class = 200
-dataset = trento_dataset(
-        data_dir = data_dir,
-        samples_per_class=samples_per_class
-    )
+dataset = trento_dataset(data_dir=data_dir, samples_per_class=samples_per_class)
 
-logging.basicConfig(filename = f'{outputs_dir}{project_name}_logs.log')
+logging.basicConfig(filename=f"{outputs_dir}{project_name}_logs.log")
 
 
 compatibility_matrix = np.array(
     [
-        [0,3,3,2,1,3],
-        [3,0,3,3,3,2],
-        [3,3,0,3,3,2],
-        [2,3,3,0,2,3],
-        [1,3,3,2,0,3],
-        [3,2,2,3,3,0],
+        [0, 3, 3, 2, 1, 3],
+        [3, 0, 3, 3, 3, 2],
+        [3, 3, 0, 3, 3, 2],
+        [2, 3, 3, 0, 2, 3],
+        [1, 3, 3, 2, 0, 3],
+        [3, 2, 2, 3, 3, 0],
     ]
-    )
+)
 
-labels = [
-    "Unknown",
-    "A.Trees", 
-    "Buildings", 
-    "Ground", 
-    "Wood", 
-    "Vineyards", 
-    "Roads"
-    ]
-color = [
-    "black", 
-    "red", 
-    "gray", 
-    "blue", 
-    "orange", 
-    "green",
-    "yellow"
-    ]
+labels = ["Unknown", "A.Trees", "Buildings", "Ground", "Wood", "Vineyards", "Roads"]
+color = ["black", "red", "gray", "blue", "orange", "green", "yellow"]
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
