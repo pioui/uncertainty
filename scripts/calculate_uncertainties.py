@@ -147,8 +147,7 @@ for project_name in os.listdir("outputs/"):
             )
 
             compatibility_matrix = calculate_compatibility_matrix(X, y, "wasserstein")
-            if project_name == "trento":
-                compatibility_matrix = compatibility_matrix[1:, 1:]
+            compatibility_matrix = compatibility_matrix[1:, 1:]
             plt.figure(dpi=500)
             plt.imshow(
                 semantic_based_uncertainty(y_pred_prob, compatibility_matrix).reshape(
@@ -168,8 +167,7 @@ for project_name in os.listdir("outputs/"):
             )
 
             compatibility_matrix = calculate_compatibility_matrix(X, y, "energy")
-            if project_name == "trento":
-                compatibility_matrix = compatibility_matrix[1:, 1:]
+            compatibility_matrix = compatibility_matrix[1:, 1:]
             plt.figure(dpi=500)
             plt.imshow(
                 semantic_based_uncertainty(y_pred_prob, compatibility_matrix).reshape(
