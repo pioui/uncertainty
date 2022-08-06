@@ -40,7 +40,6 @@ def semantic_based_uncertainty(p, C):
     @param C : np.array(C,C) compatibility / compatibilityy matrix
     @return : np.array(N) the modified variance of the C-dimentional categorical distribution
     """
-    # TODO: Something parallel, I don't like this implementation but I am stuck now
     Var = np.diag(np.matmul(np.matmul(p, C*C),np.transpose(p)))
 
     # TODO: we need the general maximum

@@ -63,67 +63,35 @@ np.save(f"{outputs_dir}{project_name}_SVM.npy", y_pred)
 
 # # # # ----- RF -----#
 
-# clf_rf = RandomForestClassifier(
-#     n_estimators=300,
-#     criterion="gini",
-#     min_samples_leaf=2,
-#     max_depth=80,
-#     min_samples_split=5,
-#     bootstrap=True,
-#     max_features="sqrt",
-#     verbose=False,
-# )
-
-# clf_rf.fit(X_train, y_train)
-# rf_accuracy = clf_rf.score(X_test, y_test)
-
-# y_pred = clf_rf.predict(X_test)
-# rf_confusion_matrix = confusion_matrix(y_test, y_pred, normalize="true")
-# rf_confusion_matrix = np.around(
-#     rf_confusion_matrix.astype("float")
-#     / rf_confusion_matrix.sum(axis=1)[:, np.newaxis],
-#     decimals=2,
-# )
-
-# y_pred = clf_rf.predict_proba(X)
-
-# logger.info(f"RF Accuracy : {rf_accuracy}")
-# logger.info(f"Cofusion Matrix: {rf_confusion_matrix}")
-# np.savetxt(
-#     f"{outputs_dir}{project_name}_RF_confusion_matrix.csv",
-#     rf_confusion_matrix,
-#     delimiter=",",
-# )
-# np.save(f"{outputs_dir}{project_name}_RF.npy", y_pred)
-
-# # # ----- DT -----#
-
-clf_dt = DecisionTreeClassifier(
-    criterion="uncertainty",
+clf_rf = RandomForestClassifier(
+    n_estimators=300,
+    criterion="gini",
     min_samples_leaf=2,
     max_depth=80,
     min_samples_split=5,
+    bootstrap=True,
     max_features="sqrt",
+    verbose=False,
 )
 
-clf_dt.fit(X_train, y_train, distance_matrix_uncertainty = compatibility_matrix)
-dt_accuracy = clf_dt.score(X_test, y_test)
+clf_rf.fit(X_train, y_train)
+rf_accuracy = clf_rf.score(X_test, y_test)
 
-y_pred = clf_dt.predict(X_test)
-dt_confusion_matrix = confusion_matrix(y_test, y_pred, normalize="true")
-dt_confusion_matrix = np.around(
-    dt_confusion_matrix.astype("float")
-    / dt_confusion_matrix.sum(axis=1)[:, np.newaxis],
+y_pred = clf_rf.predict(X_test)
+rf_confusion_matrix = confusion_matrix(y_test, y_pred, normalize="true")
+rf_confusion_matrix = np.around(
+    rf_confusion_matrix.astype("float")
+    / rf_confusion_matrix.sum(axis=1)[:, np.newaxis],
     decimals=2,
 )
 
-y_pred = clf_dt.predict_proba(X)
+y_pred = clf_rf.predict_proba(X)
 
-logger.info(f"RF Accuracy : {dt_accuracy}")
-logger.info(f"Cofusion Matrix: {dt_confusion_matrix}")
+logger.info(f"RF Accuracy : {rf_accuracy}")
+logger.info(f"Cofusion Matrix: {rf_confusion_matrix}")
 np.savetxt(
-    f"{outputs_dir}{project_name}_DT_confusion_matrix.csv",
-    dt_confusion_matrix,
+    f"{outputs_dir}{project_name}_RF_confusion_matrix.csv",
+    rf_confusion_matrix,
     delimiter=",",
 )
-np.save(f"{outputs_dir}{project_name}_DT.npy", y_pred)
+np.save(f"{outputs_dir}{project_name}_RF.npy", y_pred)
