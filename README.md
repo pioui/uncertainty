@@ -66,5 +66,4 @@ uncertainty
 ```
 
 #### To do
- - Find maximum value for semantic_based_uncertainty and make an efficient calculation
- - investigate "distance" measurements 
+ - Implement maximum value for semantic_based_uncertainty 

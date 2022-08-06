@@ -1,10 +1,12 @@
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
 import argparse
 import numpy as np
 import numpy as np
 from sklearn.metrics import confusion_matrix
 import logging
+from trento_config import compatibility_matrix
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -59,10 +61,11 @@ np.savetxt(
 )
 np.save(f"{outputs_dir}{project_name}_SVM.npy", y_pred)
 
-# # # ----- RF -----#
+# # # # ----- RF -----#
 
 clf_rf = RandomForestClassifier(
     n_estimators=300,
+    criterion="gini",
     min_samples_leaf=2,
     max_depth=80,
     min_samples_split=5,
