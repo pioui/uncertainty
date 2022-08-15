@@ -36,32 +36,23 @@ class bcss_patched_dataset:
         )  # [6941, 5342]
         self.shape = y.shape
 
-        # print(x.shape)
         x_all = x.reshape(-1, x.shape[-1])  # [37078822, 3]
-        # print(x_all.shape)
 
         if do_preprocess:
             x_all = normalize(x_all)
 
         # TODO: generalize
         x_all = x.reshape(6941, 5342, -1)  # [6941, 5342, 3]
-        # print(x_all.shape)
 
         # Patching
-        # print("patching")
 
         x_padded = np.pad(x_all, ((int(patch_size/2),),(int(patch_size/2),),(0,)), 'reflect') # [65,166+p/2, 600+p/2]
-        # print(x_padded.shape)
         x_patched = image.extract_patches_2d(x_padded, (patch_size, patch_size))
-        # print(x_patched.shape)
         x_all = x_patched.reshape(x_patched.shape[0],-1)
-        # print(x_all.shape)
 
         y_all = y
         y_all = y_all.reshape(-1)  # [37078822]
-        # print(np.unique(y_all))
         y_all = label_schema[y_all.reshape(-1)]  # [37078822] 0 to 5
-        # print(np.unique(y_all))
 
         self.n_classes = len(np.unique(y_all))
 

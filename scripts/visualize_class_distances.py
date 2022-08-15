@@ -27,8 +27,6 @@ elif dataset_name == "trento":
 
 
 X, y = dataset.full_dataset
-print(X.shape, y.shape, np.unique(y))
-print(dataset.n_classes)
 
 compatibility_matrix = compatibility_matrix / 10
 plt.figure(dpi=500)
@@ -53,7 +51,6 @@ plt.savefig(
 )
 
 compatibility_matrix = calculate_compatibility_matrix(X, y, "wasserstein")[1:, 1:]
-print(compatibility_matrix)
 compatibility_matrix = np.around(compatibility_matrix.astype("float"), decimals=2)
 plt.figure(dpi=500)
 plt.matshow(compatibility_matrix, cmap="cool")
@@ -77,7 +74,6 @@ plt.savefig(
 )
 
 compatibility_matrix = calculate_compatibility_matrix(X, y, "energy")[1:, 1:]
-print(compatibility_matrix)
 compatibility_matrix = np.around(compatibility_matrix.astype("float"), decimals=2)
 plt.figure(dpi=500)
 plt.matshow(compatibility_matrix, cmap="cool")

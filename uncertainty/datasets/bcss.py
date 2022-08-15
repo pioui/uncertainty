@@ -43,9 +43,7 @@ class bcss_dataset:
             x_all = normalize(x_all)
         y_all = y
         y_all = y_all.reshape(-1)  # [6439719]
-        print(np.unique(y_all))
         y_all = label_schema[y_all.reshape(-1)]  # [6439719] 0 to 5
-        print(np.unique(y_all))
 
         self.n_classes = len(np.unique(y_all))
 
