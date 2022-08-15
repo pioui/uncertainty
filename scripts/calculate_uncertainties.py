@@ -22,15 +22,15 @@ for project_name in os.listdir("outputs/"):
             compatibility_matrix,
             color,
         )
-    # elif project_name == "bcss":
-    #     from bcss_config import (
-    #         dataset,
-    #         project_name,
-    #         images_dir,
-    #         outputs_dir,
-    #         compatibility_matrix,
-    #         color,
-    #     )
+    elif project_name == "bcss":
+        from bcss_config import (
+            dataset,
+            project_name,
+            images_dir,
+            outputs_dir,
+            compatibility_matrix,
+            color,
+        )
     elif project_name == "bcss_patched":
         from bcss_patched_config import (
             dataset,
