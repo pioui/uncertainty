@@ -28,7 +28,7 @@ elif dataset_name == "trento":
 
 X, y = dataset.full_dataset
 
-compatibility_matrix = compatibility_matrix / 10
+compatibility_matrix = compatibility_matrix 
 plt.figure(dpi=500)
 plt.matshow(compatibility_matrix, cmap="cool")
 plt.xticks(np.arange(0, dataset.n_classes - 1, 1), range(1, dataset.n_classes))
