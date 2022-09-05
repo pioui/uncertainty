@@ -3,7 +3,7 @@ import logging
 import numpy as np
 import random
 
-from uncertainty.maximum_variance_utils import get_var_max_from_matrix
+from uncertainty.maximum_variance_utils import get_var_max_from_matrix, get_var_opt
 
 random.seed(42)
 
@@ -29,11 +29,11 @@ def variance(p):
     @param p : np.array(N,C) N pixels x C probability for each class
     @return : np.array(N) the variance of the N-dimentional categorical distribution
     """
-    C = p.shape[-1]
-    x = np.arange(C) + 1
-    var = np.sum(x ** 2 * p, axis=1) - np.sum(x * p, axis=1) ** 2
-
-    return 4 * var / (C - 1) ** 2
+    #C = p.shape[-1]
+    #x = np.arange(C) + 1
+    #var = np.sum(x ** 2 * p, axis=1) - np.sum(x * p, axis=1) ** 2
+    p_max = np.max(p, axis=1)
+    return p_max*(1-p_max)#4 * var / (C - 1) ** 2
 
 
 def semantic_based_uncertainty(p, C):
@@ -47,18 +47,29 @@ def semantic_based_uncertainty(p, C):
     #Var = np.diag(np.matmul(np.matmul(p, C*C),np.transpose(p)))
     #TODO: Something parallel, I don't like this implementation but I am stuck now
 
-    Var = np.zeros(len(p))
-    for i in range(len(p)):
-        pTCC = np.matmul(p[i],C*C)
-        pTCCp = np.matmul(pTCC,np.transpose(p[i]))
-        Var[i] = pTCCp
-    
-    # general maximum
     maxVar = get_var_max_from_matrix(C)
+    maxVar = get_var_opt(C)
+    Var = np.zeros(len(p))
+    step = 1000
+    C2 = np.power(C, 2)
+    for i in range(0,len(p),step):
+        if i+step>len(p):
+            Var[i:] = np.diag(np.matmul(np.matmul(p[i:,:], C2),np.transpose(p[i:,:])))
+        else:
+            Var[i:i+step-1] = np.diag(np.matmul(np.matmul(p[i:i+step-1,:], C2),np.transpose(p[i:i+step-1,:])))
+         
+    # for i in range(len(p)):
+    #     pTCC = np.matmul(p[i],C*C)
+    #     pTCCp = np.matmul(pTCC,np.transpose(p[i]))
+    #     Var[i] = pTCCp
+    #print("loop done")
+    # general maximum
+    #print(maxVar)
     # local maximum
-    # maxVar = np.max(Var) 
+    #maxVar = np.max(Var) 
+    #print(maxVar)
 
-    return Var/maxVar
+    return Var/(2*maxVar)
 
 def semantic_based_uncertainty_old(p, C):
     """
