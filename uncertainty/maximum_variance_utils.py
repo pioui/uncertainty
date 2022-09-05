@@ -2,6 +2,7 @@
 This script includes functions to generate the maximum of semantic uncertainty
     - "get_var_max_from_matrix" calculates the maximum using the "Compatibility matrix"
     - "get_var_max" generates the maximum in Latex form
+    - "get_var_opt" finds the maximum via an optimization algorithm
     
 author: Saloua Chlaily (UiT)
 date: 07/2022
@@ -10,8 +11,24 @@ date: 07/2022
 from itertools import permutations
 from sympy import parse_expr, latex
 from sympy.utilities.iterables import partitions
+from scipy.optimize import minimize, Bounds
 import math
+import numpy as np
 
+
+def get_var_opt(D):
+    def rosen(x):
+        return -np.transpose(x)@np.power(D,2)@x/2 #
+        
+    eq_cons = {'type': 'eq',
+             'fun' : lambda x: np.sum(x) - 1}
+    x0 = np.ones(D.shape[0])/D.shape[0]
+    bounds = Bounds(np.zeros(D.shape[0]),np.ones(D.shape[0]))
+    res = minimize(rosen, x0, method='SLSQP',
+               constraints=eq_cons, options={'ftol': 1e-9, 'disp': False},
+               bounds=bounds)
+    return -res.fun
+    
 def get_var_max_from_matrix(D):
     '''
     This function calculates the maximum using the "Compatibility matrix"
@@ -31,11 +48,8 @@ def get_var_max_from_matrix(D):
     alpha = sum(get_AC_d(C, i, D) for i in range(1, C // 2 + 1))
     beta = sum(get_BC_d1(C, i, D) for i in range(1, C // 2 + 1))
     if C % 2 == 1:
-        if C == 3:
-            beta += sum(get_BC_d2(C, i, D) for i in range(1, C // 2 + 1))
-        else:
-            beta += sum(get_BC_d2(C, i, D) for i in range(2, C // 2 + 1))
-    return -alpha / (2 * beta) if C != 3 else alpha / (2 * beta)
+        beta += sum(get_BC_d2(C, i, D) for i in range(1, C // 2 + 1))
+    return np.max(D)**2 / 4 if beta <= 0 else -alpha / (2 * beta)
 
 
 def get_s_value(i, j, D=None):
@@ -159,13 +173,3 @@ def get_AC_d(C,d,D=None):
                     f += p[k]*k
                 a+=b
     return (-1)**d * a
-
-
-D = [[0, 3, 3, 2, 1, 3],
-     [3, 0, 3, 3, 3, 2],
-     [3, 3, 0, 3, 3, 2],
-     [2, 3, 3, 0, 2, 3],
-     [1, 3, 3, 2, 0, 3],
-     [3, 2, 2, 3, 3, 0]]
-#print(get_var_max_from_matrix(D))
-#print(get_var_max(2))
