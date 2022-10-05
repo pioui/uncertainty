@@ -31,7 +31,6 @@ class trento_dataset:
 
         # Normalize to [0,1]
         if do_preprocess:
-            # x_all = normalize(x_all).astype(float)
             x_all = normalize(x_all)
 
         y = np.array(

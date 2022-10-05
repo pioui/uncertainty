@@ -1,4 +1,5 @@
 import numpy as np
+import pickle
 
 
 def normalize(x):
@@ -14,3 +15,8 @@ def normalize(x):
     assert np.unique(xn.min(axis=0)[0] == 0.0)
     assert np.unique(xn.max(axis=0)[0] == 1.0)
     return xn
+
+def unpickle(file):
+    with open(file, 'rb') as fo:
+        dict = pickle.load(fo, encoding='bytes')
+    return dict

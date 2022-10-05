@@ -35,14 +35,12 @@ class bcss_dataset:
         )  # [2260, 2545]
         self.shape = y.shape
 
-        # x_all = np.moveaxis(x, -1, 0) # [3, 2260, 2545]
-        x_all = x.reshape(-1, x.shape[-1])  # [3, 6439719]
-        # x_all = x_all.transpose(1,0) # [6439719, 3]
+        x_all = x.reshape(-1, x.shape[-1])  # [6439719, 3]
 
         if do_preprocess:
             x_all = normalize(x_all)
         y_all = y
-        y_all = y_all.reshape(-1)  # [6439719]
+        y_all = y_all.reshape(-1) 
         y_all = label_schema[y_all.reshape(-1)]  # [6439719] 0 to 5
 
         self.n_classes = len(np.unique(y_all))
@@ -79,7 +77,7 @@ class bcss_dataset:
 
         self.test_dataset = (x_test, y_test )  
         logger.info(
-            f"Test dataset shape: {x_test.shape}, {y_test.shape}, {np.unique(y)}"
+            f"Test dataset shape: {x_test.shape}, {y_test.shape}, {np.unique(y_test)}"
         )
         for l in np.unique(y_test):
             logger.info(f"Label {l}: {np.sum(y_test==l)}")
