@@ -14,7 +14,6 @@ from uncertainty.uncertainty_measurements import (
 
 for project_name in os.listdir("outputs/"):
     if project_name == "trento":
-        dataset = "trento"
         from trento_config import (
             dataset,
             project_name,
@@ -24,8 +23,16 @@ for project_name in os.listdir("outputs/"):
             color,
         )
     elif project_name == "bcss":
-        dataset = "bcss"
         from bcss_config import (
+            dataset,
+            project_name,
+            images_dir,
+            outputs_dir,
+            compatibility_matrix,
+            color,
+        )
+    elif project_name == "bcss_patched":
+        from bcss_patched_config import (
             dataset,
             project_name,
             images_dir,
@@ -43,7 +50,7 @@ for project_name in os.listdir("outputs/"):
     acc_dict = []
     for file in os.listdir(os.path.join(outputs_dir)):
         if os.path.splitext(file)[-1].lower() == ".npy":
-            model_name = file.split("_")[1].split(".")[0]
+            model_name = file.split("_")[-1].split(".")[0]
 
             y_pred_prob = np.load(os.path.join(outputs_dir, file))
             y_pred_max_prob = y_pred_prob.max(1)
@@ -134,7 +141,8 @@ for project_name in os.listdir("outputs/"):
                     dataset.shape
                 ),
                 cmap="coolwarm",
-                # vmin=0, vmax=1
+                # vmin=0, 
+                # vmax=1
             )
             plt.axis("off")
             cbar = plt.colorbar(location="top")
@@ -154,7 +162,8 @@ for project_name in os.listdir("outputs/"):
                     dataset.shape
                 ),
                 cmap="coolwarm",
-                # vmin=0, vmax=1
+                # vmin=0, 
+                # vmax=1
             )
             plt.axis("off")
             cbar = plt.colorbar(location="top")
@@ -174,7 +183,8 @@ for project_name in os.listdir("outputs/"):
                     dataset.shape
                 ),
                 cmap="coolwarm",
-                # vmin=0, vmax=1
+                # vmin=0, 
+                # vmax=1
             )
             plt.axis("off")
             cbar = plt.colorbar(location="top")

@@ -6,7 +6,6 @@ import numpy as np
 import numpy as np
 from sklearn.metrics import confusion_matrix
 import logging
-from trento_config import compatibility_matrix
 
 parser = argparse.ArgumentParser()
 parser.add_argument(

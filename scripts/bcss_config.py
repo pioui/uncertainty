@@ -28,7 +28,7 @@ compatibility_matrix = np.array(
         [1, 1, 1, 0, 3],
         [3, 3, 3, 3, 0],
     ]
-)
+)/10
 
 labels = [
     "Unknown",

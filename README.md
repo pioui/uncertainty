@@ -66,4 +66,7 @@ uncertainty
 ```
 
 #### To do
- - Implement maximum value for semantic_based_uncertainty 
+ - Logging and documentation
+ - Investigate more efficient way to calculate maximum variance (dynamic programming?)
+ - scikit-learn  Decision Trees modification for uncertainty loss
+ - 

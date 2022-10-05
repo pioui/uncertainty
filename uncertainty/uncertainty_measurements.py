@@ -3,6 +3,8 @@ import logging
 import numpy as np
 import random
 
+from uncertainty.maximum_variance_utils import get_var_max_from_matrix
+
 random.seed(42)
 
 logger = logging.getLogger(__name__)
@@ -40,12 +42,23 @@ def semantic_based_uncertainty(p, C):
     @param C : np.array(C,C) compatibility / compatibilityy matrix
     @return : np.array(N) the modified variance of the C-dimentional categorical distribution
     """
-    Var = np.diag(np.matmul(np.matmul(p, C*C),np.transpose(p)))
 
-    # TODO: we need the general maximum
-    maxVar = np.max(Var)
-    return Var / maxVar
+    #This calculation requires enormous memory (73 Gb for trento) which I don't have 
+    #Var = np.diag(np.matmul(np.matmul(p, C*C),np.transpose(p)))
+    #TODO: Something parallel, I don't like this implementation but I am stuck now
 
+    Var = np.zeros(len(p))
+    for i in range(len(p)):
+        pTCC = np.matmul(p[i],C*C)
+        pTCCp = np.matmul(pTCC,np.transpose(p[i]))
+        Var[i] = pTCCp
+    
+    # general maximum
+    maxVar = get_var_max_from_matrix(C)
+    # local maximum
+    # maxVar = np.max(Var) 
+
+    return Var/maxVar
 
 def semantic_based_uncertainty_old(p, C):
     """

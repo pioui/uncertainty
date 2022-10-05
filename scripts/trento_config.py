@@ -31,7 +31,7 @@ compatibility_matrix = np.array(
         [1, 3, 3, 2, 0, 3],
         [3, 2, 2, 3, 3, 0],
     ]
-)
+)/10
 
 labels = ["Unknown", "A.Trees", "Buildings", "Ground", "Wood", "Vineyards", "Roads"]
 color = ["black", "red", "gray", "blue", "orange", "green", "yellow"]
