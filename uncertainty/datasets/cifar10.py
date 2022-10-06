@@ -16,7 +16,7 @@ logger.setLevel(logging.DEBUG)
 
 class cifar10_dataset:
     def __init__(
-        self, data_dir, samples_per_class=500, train_size=0.5, do_preprocess=True
+        self, data_dir, train_size=0.5, do_preprocess=True
     ) -> None:
         super().__init__()
 
@@ -37,7 +37,7 @@ class cifar10_dataset:
 
         x_train = x_train.reshape((number_of_batches*number_of_batch_samples, -1)) # [50000, 3072]
         if do_preprocess:
-            x_train = normalize(x_train)
+            x_train = normalize(x_train)            
 
         y_train = y_train.reshape((number_of_batches*number_of_batch_samples)) # [50000]
         y_train = y_train.reshape(-1)
@@ -62,6 +62,15 @@ class cifar10_dataset:
 
         y_test = y_test.reshape((number_of_batch_samples)) # [10000]
         y_test = y_test.reshape(-1)
+
+        if train_size:
+            x_train, _, y_train, _ = train_test_split(
+                x_train,
+                y_train,
+                train_size=train_size,
+                random_state=42,
+                stratify=y_train,
+            )  
 
         self.train_dataset = (x_train, y_train)  
         logger.info(

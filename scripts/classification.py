@@ -36,7 +36,6 @@ logger.info(f"Test dataset shape: {X_test.shape}, {y_test.shape}, {np.unique(y_t
 logger.info(f"Total dataset shape: {X.shape}, {y.shape}, {np.unique(y)}")
 
 # ----- SVM -----#
-
 clf_svm = SVC(C=1, kernel="rbf", verbose=False, probability=True)
 clf_svm.fit(X_train, y_train)
 svm_accuracy = clf_svm.score(X_test, y_test)
@@ -60,8 +59,7 @@ np.savetxt(
 )
 np.save(f"{outputs_dir}{project_name}_SVM.npy", y_pred)
 
-# # # # ----- RF -----#
-
+# ----- RF -----#
 clf_rf = RandomForestClassifier(
     n_estimators=300,
     criterion="gini",
