@@ -9,7 +9,7 @@ import logging
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "--dataset", "-d", help="name of dataset to use (trento, bcss)", default="bcss"
+    "--dataset", "-d", help="name of dataset to use (trento, bcss, etc)", default="bcss"
 )
 
 args = parser.parse_args()
@@ -21,6 +21,8 @@ elif dataset_name == "bcss_patched":
     from bcss_patched_config import dataset, outputs_dir, project_name
 elif dataset_name == "trento":
     from trento_config import dataset, outputs_dir, project_name
+elif dataset_name == "cifar10":
+    from cifar10_config import dataset, outputs_dir, project_name
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -36,11 +38,12 @@ logger.info(f"Test dataset shape: {X_test.shape}, {y_test.shape}, {np.unique(y_t
 logger.info(f"Total dataset shape: {X.shape}, {y.shape}, {np.unique(y)}")
 
 # ----- SVM -----#
+print("Fitting SVM ...")
 clf_svm = SVC(C=1, kernel="rbf", verbose=False, probability=True)
 clf_svm.fit(X_train, y_train)
+
+print("Predicting SVM ...")
 svm_accuracy = clf_svm.score(X_test, y_test)
-
-
 y_pred = clf_svm.predict(X_test)
 svm_confusion_matrix = confusion_matrix(y_test, y_pred, normalize="true")
 svm_confusion_matrix = np.around(
@@ -48,9 +51,12 @@ svm_confusion_matrix = np.around(
     / svm_confusion_matrix.sum(axis=1)[:, np.newaxis],
     decimals=2,
 )
-y_pred = clf_svm.predict_proba(X)
+if dataset_name != "cifar10":
+    y_pred = clf_svm.predict_proba(X)
 
 logger.info(f"SVM Accuracy : {svm_accuracy}")
+rf_accuracy = clf_svm.score(X_train, y_train)
+logger.info(f"SVM training Accuracy : {svm_accuracy}")
 logger.info(f"Cofusion Matrix: {svm_confusion_matrix}")
 np.savetxt(
     f"{outputs_dir}{project_name}_SVM_confusion_matrix.csv",
@@ -60,6 +66,7 @@ np.savetxt(
 np.save(f"{outputs_dir}{project_name}_SVM.npy", y_pred)
 
 # ----- RF -----#
+print("Fitting RF ...")
 clf_rf = RandomForestClassifier(
     n_estimators=300,
     criterion="gini",
@@ -70,10 +77,10 @@ clf_rf = RandomForestClassifier(
     max_features="sqrt",
     verbose=False,
 )
-
 clf_rf.fit(X_train, y_train)
-rf_accuracy = clf_rf.score(X_test, y_test)
 
+print("Predicting SVM ...")
+rf_accuracy = clf_rf.score(X_test, y_test)
 y_pred = clf_rf.predict(X_test)
 rf_confusion_matrix = confusion_matrix(y_test, y_pred, normalize="true")
 rf_confusion_matrix = np.around(
@@ -82,9 +89,13 @@ rf_confusion_matrix = np.around(
     decimals=2,
 )
 
-y_pred = clf_rf.predict_proba(X)
+if dataset_name != "cifar10":
+    y_pred = clf_svm.predict_proba(X)
 
 logger.info(f"RF Accuracy : {rf_accuracy}")
+rf_accuracy = clf_rf.score(X_train, y_train)
+logger.info(f"RF training Accuracy : {rf_accuracy}")
+
 logger.info(f"Cofusion Matrix: {rf_confusion_matrix}")
 np.savetxt(
     f"{outputs_dir}{project_name}_RF_confusion_matrix.csv",

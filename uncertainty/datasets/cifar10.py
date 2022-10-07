@@ -63,6 +63,9 @@ class cifar10_dataset:
         y_test = y_test.reshape((number_of_batch_samples)) # [10000]
         y_test = y_test.reshape(-1)
 
+        x_all = np.concatenate((x_train,x_test))
+        y_all = np.concatenate((y_train,y_test))
+
         if train_size:
             x_train, _, y_train, _ = train_test_split(
                 x_train,
@@ -85,6 +88,11 @@ class cifar10_dataset:
         )
         for l in np.unique(y_test):
             logger.info(f"Label {l}: {np.sum(y_test==l)}")
+        
+        self.full_dataset = (x_all, y_all)  # 0 to 5
+        logger.info(f"Dataset shape: {x_all.shape}, {y_all.shape}, {np.unique(y_all)}")
+        for l in np.unique(y_all):
+            logger.info(f"Label {l}: {np.sum(y_all==l)}")
 
 
 if __name__ == "__main__":
@@ -97,6 +105,11 @@ if __name__ == "__main__":
         print(f"Label {l}: {np.sum(y==l)}")
 
     x, y = DATASET.test_dataset   
+    print(x.shape, y.shape, np.unique(y))
+    for l in np.unique(y):
+        print(f"Label {l}: {np.sum(y==l)}")
+
+    x, y = DATASET.full_dataset   
     print(x.shape, y.shape, np.unique(y))
     for l in np.unique(y):
         print(f"Label {l}: {np.sum(y==l)}")
