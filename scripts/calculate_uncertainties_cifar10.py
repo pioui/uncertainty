@@ -144,7 +144,7 @@ for file in os.listdir(os.path.join(outputs_dir)):
             if os.path.isdir(f"{outputs_dir}uncertainty_npys/{project_name}_energy_distance.npy"):
                 compatibility_matrix = np.load(f"{outputs_dir}uncertainty_npys/{project_name}_energy_distance.npy")
             else:
-                compatibility_matrix = calculate_compatibility_matrix(X, y, "energy")
+                compatibility_matrix = calculate_compatibility_matrix(dataset.train_dataset, "energy")
                 np.save(f"{outputs_dir}uncertainty_npys/{project_name}_energy_distance.npy", compatibility_matrix)
 
             y_sbu_energy = semantic_based_uncertainty(y_pred_prob, compatibility_matrix)
