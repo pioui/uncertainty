@@ -33,23 +33,23 @@ for file in os.listdir(os.path.join(outputs_dir)):
             y_pred = y_pred_prob.argmax(1)
 
             # sort each class horizontally for better representation
-            for i in range (0,10000,1000):
-                y_pred_class = y_pred[i:i+1000]
-                indxsort = np.argsort(y_pred_class)
-                y_pred_class = y_pred_class[indxsort]
-                y_pred_class = y_pred_class.reshape(10,100)
-                y_pred_class = y_pred_class.reshape(100,10)
-                y_pred_class = y_pred_class.transpose(1,0)
-                y_pred_class = y_pred_class.reshape(1000)
-                y_pred[i:i+1000] = y_pred_class
+            # for i in range (0,10000,1000):
+            #     y_pred_class = y_pred[i:i+1000]
+            #     indxsort = np.argsort(y_pred_class)
+            #     y_pred_class = y_pred_class[indxsort]
+            #     y_pred_class = y_pred_class.reshape(10,100)
+            #     y_pred_class = y_pred_class.reshape(100,10)
+            #     y_pred_class = y_pred_class.transpose(1,0)
+            #     y_pred_class = y_pred_class.reshape(1000)
+            #     y_pred[i:i+1000] = y_pred_class
 
-                y_pred_class_prob = y_pred_prob[i:i+1000,:]
-                y_pred_class_prob= y_pred_class_prob[indxsort,:]
-                y_pred_class_prob = y_pred_class_prob.reshape(10,100,-1)
-                y_pred_class_prob = y_pred_class_prob.reshape(100,10,-1)
-                y_pred_class_prob = y_pred_class_prob.transpose(1,0,2)
-                y_pred_class_prob = y_pred_class_prob.reshape(1000,-1)
-                y_pred_prob[i:i+1000] =  y_pred_class_prob              
+            #     y_pred_class_prob = y_pred_prob[i:i+1000,:]
+            #     y_pred_class_prob= y_pred_class_prob[indxsort,:]
+            #     y_pred_class_prob = y_pred_class_prob.reshape(10,100,-1)
+            #     y_pred_class_prob = y_pred_class_prob.reshape(100,10,-1)
+            #     y_pred_class_prob = y_pred_class_prob.transpose(1,0,2)
+            #     y_pred_class_prob = y_pred_class_prob.reshape(1000,-1)
+            #     y_pred_prob[i:i+1000] =  y_pred_class_prob              
 
             plt.figure(dpi=500)
             plt.imshow(
@@ -101,7 +101,6 @@ for file in os.listdir(os.path.join(outputs_dir)):
             )
             np.save(f"{outputs_dir}uncertainty_npys/{project_name}_{model_name}_GBU.npy", y_gbu)
 
-
             y_variance = variance(y_pred_prob)
             plt.figure(dpi=500)
             plt.imshow(
@@ -140,11 +139,11 @@ for file in os.listdir(os.path.join(outputs_dir)):
             )
             np.save(f"{outputs_dir}uncertainty_npys/{project_name}_{model_name}_ENTROPY.npy", y_entropy)
 
-
             if os.path.isdir(f"{outputs_dir}uncertainty_npys/{project_name}_energy_distance.npy"):
                 compatibility_matrix = np.load(f"{outputs_dir}uncertainty_npys/{project_name}_energy_distance.npy")
             else:
-                compatibility_matrix = calculate_compatibility_matrix(dataset.train_dataset, "energy")
+                X_train, y_train = dataset.train_dataset
+                compatibility_matrix = calculate_compatibility_matrix(X_train, y_train, distance_name="energy")
                 np.save(f"{outputs_dir}uncertainty_npys/{project_name}_energy_distance.npy", compatibility_matrix)
 
             y_sbu_energy = semantic_based_uncertainty(y_pred_prob, compatibility_matrix)

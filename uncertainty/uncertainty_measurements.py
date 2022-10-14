@@ -33,7 +33,7 @@ def variance(p):
     #x = np.arange(C) + 1
     #var = np.sum(x ** 2 * p, axis=1) - np.sum(x * p, axis=1) ** 2
     p_max = np.max(p, axis=1)
-    return p_max*(1-p_max)#4 * var / (C - 1) ** 2
+    return p_max*(1-p_max)/0.25#4 * var / (C - 1) ** 2
 
 
 def semantic_based_uncertainty(p, C):

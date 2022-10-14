@@ -8,6 +8,7 @@ import random
 import imageio
 
 from uncertainty.utils import normalize, unpickle
+from uncertainty.compatibility_matrix import calculate_compatibility_matrix
 
 random.seed(42)
 logger = logging.getLogger(__name__)
@@ -63,6 +64,13 @@ class cifar10_dataset:
         y_test = y_test.reshape((number_of_batch_samples)) # [10000]
         y_test = y_test.reshape(-1)
 
+        # sort each class vertically for better representation
+        # indxsort = np.argsort(y_test)
+        # y_test = y_test[indxsort]
+        # x_test = x_test[indxsort]
+
+        self.shape = (100,100)
+
         x_all = np.concatenate((x_train,x_test))
         y_all = np.concatenate((y_train,y_test))
 
@@ -74,6 +82,8 @@ class cifar10_dataset:
                 random_state=42,
                 stratify=y_train,
             )  
+        
+
 
         self.train_dataset = (x_train, y_train)  
         logger.info(
