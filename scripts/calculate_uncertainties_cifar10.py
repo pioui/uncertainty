@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import os
 import numpy as np
 from matplotlib import colors
-from uncertainty.compatibility_matrix import calculate_compatibility_matrix
 
 from uncertainty.uncertainty_measurements import (
     geometry_based_uncertainty,
@@ -139,12 +138,12 @@ for file in os.listdir(os.path.join(outputs_dir)):
             )
             np.save(f"{outputs_dir}uncertainty_npys/{project_name}_{model_name}_ENTROPY.npy", y_entropy)
 
-            if os.path.isdir(f"{outputs_dir}uncertainty_npys/{project_name}_energy_distance.npy"):
-                compatibility_matrix = np.load(f"{outputs_dir}uncertainty_npys/{project_name}_energy_distance.npy")
-            else:
-                X_train, y_train = dataset.train_dataset
-                compatibility_matrix = calculate_compatibility_matrix(X_train, y_train, distance_name="energy")
-                np.save(f"{outputs_dir}uncertainty_npys/{project_name}_energy_distance.npy", compatibility_matrix)
+            # if os.path.isdir(f"{outputs_dir}uncertainty_npys/{project_name}_energy_distance.npy"):
+            #     compatibility_matrix = np.load(f"{outputs_dir}uncertainty_npys/{project_name}_energy_distance.npy")
+            # else:
+            #     X_train, y_train = dataset.train_dataset
+            #     compatibility_matrix = calculate_compatibility_matrix(X_train, y_train, distance_name="energy")
+            #     np.save(f"{outputs_dir}uncertainty_npys/{project_name}_energy_distance.npy", compatibility_matrix)
 
             y_sbu_energy = semantic_based_uncertainty(y_pred_prob, compatibility_matrix)
             plt.figure(dpi=500)
