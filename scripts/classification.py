@@ -58,7 +58,7 @@ else:
     y_pred = clf_svm.predict_proba(X)
 
 logger.info(f"SVM Accuracy : {svm_accuracy}")
-rf_accuracy = clf_svm.score(X_train, y_train)
+svm_accuracy = clf_svm.score(X_train, y_train)
 logger.info(f"SVM training Accuracy : {svm_accuracy}")
 logger.info(f"Cofusion Matrix: {svm_confusion_matrix}")
 np.savetxt(
@@ -69,45 +69,45 @@ np.savetxt(
 print(y_pred.shape)
 np.save(f"{outputs_dir}{project_name}_SVM.npy", y_pred)
 
-# # ----- RF -----#
-# print("Fitting RF ...")
-# clf_rf = RandomForestClassifier(
-#     n_estimators=300,
-#     criterion="gini",
-#     min_samples_leaf=2,
-#     max_depth=80,
-#     min_samples_split=5,
-#     bootstrap=True,
-#     max_features="sqrt",
-#     verbose=False,
-# )
-# clf_rf.fit(X_train, y_train)
+# ----- RF -----#
+print("Fitting RF ...")
+clf_rf = RandomForestClassifier(
+    n_estimators=300,
+    criterion="gini",
+    min_samples_leaf=2,
+    max_depth=80,
+    min_samples_split=5,
+    bootstrap=True,
+    max_features="sqrt",
+    verbose=False,
+)
+clf_rf.fit(X_train, y_train)
 
-# print("Predicting RF ...")
-# rf_accuracy = clf_rf.score(X_test, y_test)
-# y_pred = clf_rf.predict(X_test)
-# rf_confusion_matrix = confusion_matrix(y_test, y_pred, normalize="true")
-# rf_confusion_matrix = np.around(
-#     rf_confusion_matrix.astype("float")
-#     / rf_confusion_matrix.sum(axis=1)[:, np.newaxis],
-#     decimals=2,
-# )
+print("Predicting RF ...")
+rf_accuracy = clf_rf.score(X_test, y_test)
+y_pred = clf_rf.predict(X_test)
+rf_confusion_matrix = confusion_matrix(y_test, y_pred, normalize="true")
+rf_confusion_matrix = np.around(
+    rf_confusion_matrix.astype("float")
+    / rf_confusion_matrix.sum(axis=1)[:, np.newaxis],
+    decimals=2,
+)
 
-# if dataset_name == "cifar10":
-#     y_pred = clf_rf.predict_proba(X_test)
-# else:
-#     y_pred = clf_rf.predict_proba(X)
+if dataset_name == "cifar10":
+    y_pred = clf_rf.predict_proba(X_test)
+else:
+    y_pred = clf_rf.predict_proba(X)
 
 
-# logger.info(f"RF Accuracy : {rf_accuracy}")
-# rf_accuracy = clf_rf.score(X_train, y_train)
-# logger.info(f"RF training Accuracy : {rf_accuracy}")
+logger.info(f"RF Accuracy : {rf_accuracy}")
+rf_accuracy = clf_rf.score(X_train, y_train)
+logger.info(f"RF training Accuracy : {rf_accuracy}")
 
-# logger.info(f"Cofusion Matrix: {rf_confusion_matrix}")
-# np.savetxt(
-#     f"{outputs_dir}{project_name}_RF_confusion_matrix.csv",
-#     rf_confusion_matrix,
-#     delimiter=",",
-# )
-# print(y_pred.shape)
-# np.save(f"{outputs_dir}{project_name}_RF.npy", y_pred)
+logger.info(f"Cofusion Matrix: {rf_confusion_matrix}")
+np.savetxt(
+    f"{outputs_dir}{project_name}_RF_confusion_matrix.csv",
+    rf_confusion_matrix,
+    delimiter=",",
+)
+print(y_pred.shape)
+np.save(f"{outputs_dir}{project_name}_RF.npy", y_pred)
