@@ -8,7 +8,7 @@ from uncertainty.datasets import trento_dataset
 project_name = "trento"
 images_dir = f"outputs/{project_name}/images/"
 outputs_dir = f"outputs/{project_name}/"
-data_dir = "/home/pigi/data/trento/"
+data_dir = "/work/saloua/Datasets/Trento/"
 
 if not os.path.exists(outputs_dir):
     os.makedirs(outputs_dir)
@@ -31,11 +31,23 @@ compatibility_matrix = np.array(
         [1, 3, 3, 2, 0, 3],
         [3, 2, 2, 3, 3, 0],
     ]
-)/10
+)/3#/10
+
+compatibility_matrix1 = np.array(
+    [
+        [0, 3, 4, 2, 1, 3],
+        [3, 0, 3, 3, 3, 2],
+        [4, 3, 0, 3, 4, 2],
+        [2, 3, 3, 0, 2, 3],
+        [1, 3, 4, 2, 0, 3],
+        [3, 2, 2, 3, 3, 0],
+    ]
+)/4#/10
 
 labels = ["Unknown", "A.Trees", "Buildings", "Ground", "Wood", "Vineyards", "Roads"]
-color = ["black", "red", "gray", "blue", "orange", "green", "yellow"]
-
+#color = ["black", "red", "gray", "blue", "orange", "green", "yellow"]
+#color = ["#22181c", "#22181c", "#5dd9c1", "#ffe66d", "#e36397", "#8377d1", "#3b429f"]
+color = ["#22181c", "#073B4C", "#F78C6B", "#FFD166", "#06D6A0", "#118AB2", "#EF476F"]
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 logger.info(f"Project name: {project_name} ")

@@ -5,25 +5,34 @@ import numpy as np
 import logging
 import random
 
-from uncertainty.utils import normalize
+#from uncertainty.utils import normalize
 
 random.seed(42)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
+def normalize(x):
+    """
+    @param x : array(channels, N)
+    @return : array(L, N) normalized x at [0,1] in channels dimention
+    """
+
+    # logger.info("Normalize to 0,1")
+    x_min = x.min(axis=0)[0]  # [57]
+    x_max = x.max(axis=0)[0]  # [57]
+    xn = (x - x_min) / (x_max - x_min)
+    assert np.unique(xn.min(axis=0)[0] == 0.0)
+    assert np.unique(xn.max(axis=0)[0] == 1.0)
+    return xn
 
 class trento_dataset:
     def __init__(
-        self, data_dir, samples_per_class=200, train_size=0.5, do_preprocess=True
+        self, data_dir, samples_per_class=200, train_size=0.2, do_preprocess=True
     ) -> None:
         super().__init__()
 
-        image_hyper = np.array(
-            tifffile.imread(data_dir + "hyper_Italy.tif")
-        )  # [63,166,600]
-        image_lidar = np.array(
-            tifffile.imread(data_dir + "LiDAR_Italy.tif")
-        )  # [2,166,600]
+        image_hyper = np.array(tifffile.imread(f"{data_dir}hyper_Italy.tif"))
+        image_lidar = np.array(tifffile.imread(f"{data_dir}LiDAR_Italy.tif"))
         x = np.concatenate((image_hyper, image_lidar), axis=0)  # [65,166,600]
         x_all = x
         x_all = x_all.reshape(len(x_all), -1)
@@ -31,41 +40,48 @@ class trento_dataset:
 
         # Normalize to [0,1]
         if do_preprocess:
+            # x_all = normalize(x_all).astype(float)
             x_all = normalize(x_all)
 
-        y = np.array(
-            io.loadmat(data_dir + "TNsecSUBS_Test.mat")["TNsecSUBS_Test"],
-            dtype=np.int64,
-        )  # [166,600] 0 to 6
+        y = np.array(io.loadmat(f"{data_dir}TNsecSUBS_Test.mat")["TNsecSUBS_Test"], dtype=np.int64)
+
         self.shape = y.shape
-        self.n_classes = len(np.unique(y) - 1)
+        self.n_classes = len(np.unique(y)) - 1
 
         y_all = y
         y_all = y_all.reshape(-1)  # [99600]
 
-        train_inds = []
-        for label in np.unique(y_all):
-            label_ind = np.where(y_all == label)[0]
-            samples = samples_per_class
-            if label == 0:
-                continue
-            else:
-                labelled_exs = np.random.choice(label_ind, size=samples, replace=True)
+        # train_inds = []
+        # for label in np.unique(y_all):
+        #     label_ind = np.where(y_all == label)[0]
+        #     samples = samples_per_class
+        #     if label == 0:
+        #         continue
+        #     else:
+        #         labelled_exs = np.random.choice(label_ind, size=samples, replace=True)
 
-            train_inds.append(labelled_exs)
-        train_inds = np.concatenate(train_inds)
+        #     train_inds.append(labelled_exs)
+        # train_inds = np.concatenate(train_inds)
 
-        x_all_train = x_all[train_inds]
-        y_all_train = y_all[train_inds]
+        # x_all_train = x_all[train_inds]
+        # y_all_train = y_all[train_inds]
+
+        # x_train, x_test, y_train, y_test = train_test_split(
+        #     x_all_train,
+        #     y_all_train,
+        #     train_size=train_size,
+        #     random_state=42,
+        #     stratify=y_all_train,
+        # )  # 0 to 5
 
         x_train, x_test, y_train, y_test = train_test_split(
-            x_all_train,
-            y_all_train,
+            x_all[y_all!=0,:],
+            y_all[y_all!=0],
             train_size=train_size,
             random_state=42,
-            stratify=y_all_train,
+            stratify=y_all[y_all!=0],
         )  # 0 to 5
-
+        
         self.train_dataset = (x_train, y_train)  # 1 to 5
         logger.info(
             f"Train dataset shape: {x_train.shape}, {y_train.shape}, {np.unique(y_train)}"
@@ -88,7 +104,7 @@ class trento_dataset:
 
 if __name__ == "__main__":
 
-    DATASET = trento_dataset(data_dir="/home/pigi/data/trento/")
+    DATASET = trento_dataset(data_dir="/work/saloua/Datasets/Trento/")
 
     x, y = DATASET.full_dataset  # [5731136] 0 to 20
     print(x.shape, y.shape, np.unique(y))

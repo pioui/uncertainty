@@ -14,6 +14,14 @@ np.random.seed(42)
 
 DO_OVERALL = True
 
+def FR_based_uncertainty(p):
+    """
+    @param p : np.array(N,C) N pixels x C probability for each class
+    @return : uncertainty claculated with respect of the distance from center of the standard (C-1)-simplex
+    """
+    C = p.shape[-1]
+    return 1 - np.arccos(np.sum(np.sqrt(p/ C), axis=1))** 2 / np.arccos(np.sqrt(1/ C))** 2
+
 
 def geometry_based_uncertainty(p):
     """
@@ -32,8 +40,8 @@ def variance(p):
     #C = p.shape[-1]
     #x = np.arange(C) + 1
     #var = np.sum(x ** 2 * p, axis=1) - np.sum(x * p, axis=1) ** 2
-    p_max = np.max(p, axis=1)
-    return p_max*(1-p_max)/0.25#4 * var / (C - 1) ** 2
+    p_max = np.amax(p, axis=1)
+    return p_max*(1-p_max)*4#4 * var / (C - 1) ** 2
 
 
 def semantic_based_uncertainty(p, C):
@@ -46,8 +54,8 @@ def semantic_based_uncertainty(p, C):
     #This calculation requires enormous memory (73 Gb for trento) which I don't have 
     #Var = np.diag(np.matmul(np.matmul(p, C*C),np.transpose(p)))
     #TODO: Something parallel, I don't like this implementation but I am stuck now
-
-    maxVar = get_var_max_from_matrix(C)
+    C = C/np.amax(C)
+    #maxVar = get_var_max_from_matrix(C)
     maxVar = get_var_opt(C)
     Var = np.zeros(len(p))
     step = 1000

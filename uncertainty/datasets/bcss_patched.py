@@ -18,7 +18,7 @@ label_schema = np.array(
 
 class bcss_patched_dataset:
     def __init__(
-        self, data_dir, samples_per_class=500, train_size=0.5, do_preprocess=True,
+        self, data_dir, samples_per_class=500, train_size=0.001, do_preprocess=True,
         patch_size = 5
     ) -> None:
         super().__init__()
@@ -48,7 +48,8 @@ class bcss_patched_dataset:
 
         x_padded = np.pad(x_all, ((int(patch_size/2),),(int(patch_size/2),),(0,)), 'reflect') # [65,166+p/2, 600+p/2]
         x_patched = image.extract_patches_2d(x_padded, (patch_size, patch_size))
-        x_all = x_patched.reshape(x_patched.shape[0],-1)
+        
+        x_all = x_patched #.reshape(x_patched.shape[0],-1)
 
         y_all = y
         y_all = y_all.reshape(-1)  # [37078822]
@@ -56,27 +57,29 @@ class bcss_patched_dataset:
 
         self.n_classes = len(np.unique(y_all))
 
-        train_inds = []
-        for label in np.unique(y_all):
-            label_ind = np.where(y_all == label)[0]
-            samples = samples_per_class
-            if label == 0:
-                continue
-            else:
-                labelled_exs = np.random.choice(label_ind, size=samples, replace=True)
+        # train_inds = []
+        # for label in np.unique(y_all):
+        #     label_ind = np.where(y_all == label)[0]
+        #     samples = samples_per_class
+        #     if label == 0:
+        #         continue
+        #     else:
+        #         labelled_exs = np.random.choice(label_ind, size=samples, replace=True)
 
-            train_inds.append(labelled_exs)
-        train_inds = np.concatenate(train_inds)
+        #     train_inds.append(labelled_exs)
+        # train_inds = np.concatenate(train_inds)
 
-        x_all_train = x_all[train_inds]
-        y_all_train = y_all[train_inds]
+        # x_all_train = x_all[train_inds]
+        # y_all_train = y_all[train_inds]
 
         x_train, x_test, y_train, y_test = train_test_split(
-            x_all_train,
-            y_all_train,
+            #x_all_train,
+            #y_all_train,
+            x_all[y_all!=0,:,:,:],
+            y_all[y_all!=0],
             train_size=train_size,
             random_state=42,
-            stratify=y_all_train,
+            stratify=y_all[y_all!=0],#y_all_train,
         )  
 
         self.train_dataset = (x_train, y_train)  
@@ -101,7 +104,7 @@ class bcss_patched_dataset:
 
 if __name__ == "__main__":
 
-    DATASET = bcss_patched_dataset(data_dir="/home/pigi/repos/BCSS/")
+    DATASET = bcss_patched_dataset(data_dir="/work/saloua/uncertainty-main/datasets/")
 
     x, y = DATASET.full_dataset   
     print(x.shape, y.shape, np.unique(y))
