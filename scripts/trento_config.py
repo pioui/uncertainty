@@ -1,7 +1,7 @@
-""""
+"""
 Configuration file for Trento sataset
 
-""""
+"""
 
 import logging
 import os
