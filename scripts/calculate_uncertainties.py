@@ -1,3 +1,10 @@
+"""
+Script to run uncertainty metrics and create uncertainty maps for BCSS and Trento datasets
+
+Usage:
+  python3 scripts/calculate_uncertainties.py 
+
+"""
 import matplotlib.pyplot as plt
 import os
 import numpy as np
@@ -16,6 +23,7 @@ from uncertainty.uncertainty_measurements import (
 
 for project_name in os.listdir("outputs/"):
     if project_name == "trento":
+        #continue
         from trento_config import (
             dataset,
             project_name,
@@ -31,23 +39,40 @@ for project_name in os.listdir("outputs/"):
         col = 6
         borderaxespad =-2
         columnspacing = 0.5
+    # elif project_name == "bcss":
+    #     #continue
+    #     from bcss_config import (
+    #         dataset,
+    #         project_name,
+    #         images_dir,
+    #         outputs_dir,
+    #         compatibility_matrix,
+    #         compatibility_matrix1,
+    #         color,
+    #         labels,
+    #     )
+    #     location = "right"
+    #     orientation = "vertical"
+    #     col = 3
+    #     borderaxespad =-3.25
+    #     columnspacing = 1.25
+    # # elif project_name == "bcss_patched":
+    #     from bcss_patched_config import (
+    #         dataset,
+    #         project_name,
+    #         images_dir,
+    #         outputs_dir,
+    #         compatibility_matrix,
+    #         compatibility_matrix1,
+    #         color,
+    #         labels,
+    #     )
+    #     location = "right"
+    #     orientation = "vertical"
+    #     col = 3
+    #     borderaxespad =-3.25
+    #     columnspacing = 1.25
 
-    elif project_name == "bcss":
-        from bcss_config import (
-            dataset,
-            project_name,
-            images_dir,
-            outputs_dir,
-            compatibility_matrix,
-            compatibility_matrix1,
-            color,
-            labels,
-        )
-        location = "right"
-        orientation = "vertical"
-        col = 3
-        borderaxespad =-3.25
-        columnspacing = 1.25
     else:
         continue
 
@@ -56,6 +81,20 @@ for project_name in os.listdir("outputs/"):
 
     acc_dict = []
     for file in os.listdir(os.path.join(outputs_dir)):
+        #if 'glcm' not in file:
+        #    continue
+        
+        if 'test' in file:
+            continue
+        
+        if 'clf' in file:
+            continue
+        
+        #if 'SVM' in file:
+        #    continue
+        
+        if 'GP' in file:
+            continue
         
         if os.path.splitext(file)[-1].lower() == ".npy":
             if 'OPT' in file:
@@ -276,7 +315,7 @@ for project_name in os.listdir("outputs/"):
             cbar = plt.colorbar(su_plt, location = location, orientation = orientation, pad = 0.01)
             cbar.ax.tick_params(labelsize=12)
             ax.remove()
-            plt.savefig('plot_onlycbar.eps',bbox_inches='tight')
+            plt.savefig(f"{images_dir}{model_name}_onlycbar.eps" ,bbox_inches='tight')
 
 
             plt.figure(dpi=500)

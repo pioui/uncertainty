@@ -25,7 +25,8 @@ uncertainty
 └───scripts
     │   trento_config.py
     │   bcss_config.py
-    |   bcss_patched_config.py
+    │   singal_modulation_config.py
+
 ```
 
 
@@ -34,7 +35,7 @@ uncertainty
 ```
 python3 scripts/classification.py -d trento
 python3 scripts/classification.py -d bcss
-python3 scripts/classification.py -d bcss_patched
+python3 scripts/classification.py -d sm
 ```
 
 #### Calculate and Save Uncertainty maps for all the output/*.npy files
@@ -59,9 +60,9 @@ uncertainty
     |   │   bcss.npy
     |   └───images
     |
-    └───bcss_pached
-        │   bcss_pached.logs
-        │   bcss_pached.npy
+    └───signal_modulation
+        │   ignal_modulation.logs
+        │   ignal_modulation.npy
         └───images
 ```
 
@@ -69,4 +70,5 @@ uncertainty
  - Logging and documentation
  - Investigate more efficient way to calculate maximum variance (dynamic programming?)
  - scikit-learn  Decision Trees modification for uncertainty loss
- - 
+ - Signal modulation uncertainty calculation
+ - Optimal SVM and RF for signal modulation 
