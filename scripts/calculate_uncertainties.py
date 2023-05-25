@@ -315,7 +315,7 @@ for project_name in os.listdir("outputs/"):
             cbar = plt.colorbar(su_plt, location = location, orientation = orientation, pad = 0.01)
             cbar.ax.tick_params(labelsize=12)
             ax.remove()
-            plt.savefig('plot_onlycbar.eps',bbox_inches='tight')
+            plt.savefig(f"{images_dir}{model_name}_onlycbar.eps" ,bbox_inches='tight')
 
 
             plt.figure(dpi=500)
