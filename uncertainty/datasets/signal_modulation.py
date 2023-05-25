@@ -4,8 +4,8 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 import logging
 import random
-
-#from uncertainty.utils import normalize TODO: Why?
+from scipy.io import loadmat
+import os
 
 random.seed(42)
 logger = logging.getLogger(__name__)
@@ -25,40 +25,32 @@ def normalize(x):
     assert np.unique(xn.max(axis=0)[0] == 1.0)
     return xn
 
-class trento_dataset:
+class signal_modulation_dataset:
     def __init__(
-        self, data_dir, samples_per_class=200, train_size=0.2, do_preprocess=True
-    ) -> None:
+        self, data_dir, samples_per_class=200, train_size=0.2) -> None:
         super().__init__()
 
-        image_hyper = np.array(tifffile.imread(f"{data_dir}hyper_Italy.tif"))
-        image_lidar = np.array(tifffile.imread(f"{data_dir}LiDAR_Italy.tif"))
-        x = np.concatenate((image_hyper, image_lidar), axis=0)  # [65,166,600]
-        x_all = x
-        x_all = x_all.reshape(len(x_all), -1)
-        x_all = x_all.transpose(1, 0)  # [99600,65]
+        # Load the .mat file
+        rxTrainFrames = loadmat(os.path.join(data_dir, "rxTrainFrames.mat"))["rxTrainFrames"][0]
+        rxTrainLabelsNumbers = loadmat(os.path.join(data_dir, "rxTrainLabelsNumbers.mat"))["rxTrainLabelsNumbers"][:,0]
 
-        # Normalize to [0,1]
-        if do_preprocess:
-            # x_all = normalize(x_all).astype(float)
-            x_all = normalize(x_all)
+        rxTestFrames = loadmat(os.path.join(data_dir, "rxTestFrames.mat"))["rxTestFrames"][0]
+        rxTestLabelsNumbers = loadmat(os.path.join(data_dir, "rxTestLabelsNumbers.mat"))["rxTestLabelsNumbers"][:,0]
 
-        y = np.array(io.loadmat(f"{data_dir}TNsecSUBS_Test.mat")["TNsecSUBS_Test"], dtype=np.int64)
+        x_train = rxTrainFrames.transpose(2,0,1)
+        x_train = x_train.reshape(x_train.shape[0],-1)
+        y_train = rxTrainLabelsNumbers.reshape(-1)
 
-        self.shape = y.shape
-        self.n_classes = len(np.unique(y)) - 1
+        x_test = rxTestFrames.transpose(2,0,1)
+        x_test = x_test.reshape(x_test.shape[0],-1)
+        y_test = rxTestLabelsNumbers.reshape(-1)
 
-        y_all = y
-        y_all = y_all.reshape(-1)  # [99600]
+        x_all = np.concatenate((x_train,x_test))
+        y_all = np.concatenate((y_train,y_test))
 
-        x_train, x_test, y_train, y_test = train_test_split(
-            x_all[y_all!=0,:],
-            y_all[y_all!=0],
-            train_size=train_size,
-            random_state=42,
-            stratify=y_all[y_all!=0],
-        )  # 0 to 5
-        
+        self.shape = y_all.shape
+        self.n_classes = len(np.unique(y_all)) 
+
         self.train_dataset = (x_train, y_train)  # 1 to 5
         logger.info(
             f"Train dataset shape: {x_train.shape}, {y_train.shape}, {np.unique(y_train)}"
@@ -81,7 +73,7 @@ class trento_dataset:
 
 if __name__ == "__main__":
 
-    DATASET = trento_dataset(data_dir="/home/pigi/data/trento/")
+    DATASET = signal_modulation_dataset(data_dir="/home/pigi/data/signal_modulation/")
 
     x, y = DATASET.full_dataset  # [5731136] 0 to 20
     print(x.shape, y.shape, np.unique(y))
