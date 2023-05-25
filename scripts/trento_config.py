@@ -1,14 +1,19 @@
+""""
+Configuration file for Trento sataset
+
+""""
+
 import logging
 import os
 import numpy as np
 
 from uncertainty.datasets import trento_dataset
 
-
 project_name = "trento"
 images_dir = f"outputs/{project_name}/images/"
 outputs_dir = f"outputs/{project_name}/"
-data_dir = "/work/saloua/Datasets/Trento/"
+# data_dir = "/work/saloua/Datasets/Trento/"
+data_dir = "/home/pigi/data/trento/"
 
 if not os.path.exists(outputs_dir):
     os.makedirs(outputs_dir)

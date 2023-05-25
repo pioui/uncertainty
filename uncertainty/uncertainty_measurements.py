@@ -37,9 +37,6 @@ def variance(p):
     @param p : np.array(N,C) N pixels x C probability for each class
     @return : np.array(N) the variance of the N-dimentional categorical distribution
     """
-    #C = p.shape[-1]
-    #x = np.arange(C) + 1
-    #var = np.sum(x ** 2 * p, axis=1) - np.sum(x * p, axis=1) ** 2
     p_max = np.amax(p, axis=1)
     return p_max*(1-p_max)*4#4 * var / (C - 1) ** 2
 
@@ -51,11 +48,7 @@ def semantic_based_uncertainty(p, C):
     @return : np.array(N) the modified variance of the C-dimentional categorical distribution
     """
 
-    #This calculation requires enormous memory (73 Gb for trento) which I don't have 
-    #Var = np.diag(np.matmul(np.matmul(p, C*C),np.transpose(p)))
-    #TODO: Something parallel, I don't like this implementation but I am stuck now
     C = C/np.amax(C)
-    #maxVar = get_var_max_from_matrix(C)
     maxVar = get_var_opt(C)
     Var = np.zeros(len(p))
     step = 1000
@@ -65,17 +58,7 @@ def semantic_based_uncertainty(p, C):
             Var[i:] = np.diag(np.matmul(np.matmul(p[i:,:], C2),np.transpose(p[i:,:])))
         else:
             Var[i:i+step-1] = np.diag(np.matmul(np.matmul(p[i:i+step-1,:], C2),np.transpose(p[i:i+step-1,:])))
-         
-    # for i in range(len(p)):
-    #     pTCC = np.matmul(p[i],C*C)
-    #     pTCCp = np.matmul(pTCC,np.transpose(p[i]))
-    #     Var[i] = pTCCp
-    #print("loop done")
-    # general maximum
-    #print(maxVar)
-    # local maximum
-    #maxVar = np.max(Var) 
-    #print(maxVar)
+        
 
     return Var/(2*maxVar)
 
