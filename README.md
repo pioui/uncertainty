@@ -71,3 +71,4 @@ uncertainty
  - Investigate more efficient way to calculate maximum variance (dynamic programming?)
  - scikit-learn  Decision Trees modification for uncertainty loss
  - Signal modulation uncertainty calculation
+ - Optimal SVM and RF for signal modulation 
