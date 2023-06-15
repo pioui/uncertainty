@@ -1,8 +1,10 @@
 """
-Script to run uncertainty metrics and create uncertainty maps for BCSS and Trento datasets
+Script for Generating Uncertainty Maps: BCSS and Trento Datasets
+With a focus on spatially represented data, these uncertainty maps provide valuable visual representations.
+TODO: rename file
 
 Usage:
-  python3 scripts/calculate_uncertainties.py 
+  python3 scripts/calculate_uncertainties_maps.py 
 
 """
 import matplotlib.pyplot as plt
@@ -24,59 +26,25 @@ from uncertainty.uncertainty_measurements import (
 for project_name in os.listdir("outputs/"):
     if project_name == "trento":
         #continue
-        from trento_config import (
-            dataset,
-            project_name,
-            images_dir,
-            outputs_dir,
-            compatibility_matrix,
-            compatibility_matrix1,
-            color,
-            labels,
-        )
+        from trento_config import *
         location = "bottom"
         orientation = "horizontal"
         col = 6
         borderaxespad =-2
         columnspacing = 0.5
-    # elif project_name == "bcss":
-    #     #continue
-    #     from bcss_config import (
-    #         dataset,
-    #         project_name,
-    #         images_dir,
-    #         outputs_dir,
-    #         compatibility_matrix,
-    #         compatibility_matrix1,
-    #         color,
-    #         labels,
-    #     )
-    #     location = "right"
-    #     orientation = "vertical"
-    #     col = 3
-    #     borderaxespad =-3.25
-    #     columnspacing = 1.25
-    # # elif project_name == "bcss_patched":
-    #     from bcss_patched_config import (
-    #         dataset,
-    #         project_name,
-    #         images_dir,
-    #         outputs_dir,
-    #         compatibility_matrix,
-    #         compatibility_matrix1,
-    #         color,
-    #         labels,
-    #     )
-    #     location = "right"
-    #     orientation = "vertical"
-    #     col = 3
-    #     borderaxespad =-3.25
-    #     columnspacing = 1.25
+    elif project_name == "bcss":
+        #continue
+        from bcss_config import *
+        location = "right"
+        orientation = "vertical"
+        col = 3
+        borderaxespad =-3.25
+        columnspacing = 1.25
 
     else:
         continue
 
-    X, y = dataset.full_dataset  # 15107
+    X, y = dataset.full_dataset  
     y_true = y.reshape(-1)
 
     acc_dict = []
