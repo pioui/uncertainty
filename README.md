@@ -1,97 +1,95 @@
 # Uncertainty - Under Construction
-A repository for modified variance as uncertainty measure
-by Saloua & Pigi
+This repository contains a modified variance as an uncertainty measure, developed by Saloua & Pigi.
 
-#### Create conda envirioment
+## Set up
+
+### Envirioment
+
+If you haven't created it already, please create a conda environment using the following command
 ```
 conda env create -f environment.yml
+```
+Activate the environment:
+```
 conda activate uncertainty
 ```
 
-#### Install
+### Installation
+
+To install the Python package for uncertainty, execute the following command:
 ```
 python3 setup.py build install
 ```
-#### Install - editable version
+Alternatively, if you plan to make changes under the uncertainty/uncertainty folder, install the editable version:
 ```
 pip install -e .
 ```
-
-#### Edit data directories and output at the configurations files :
-
+### Configuaration
+Edit the data directories and output configurations in the respective configuration files for each dataset you want to use:
 ```
 uncertainty
 │   
 └───scripts
     │   trento_config.py
     │   bcss_config.py
-    │   singal_modulation_config.py
+    │   signalModulation_config.py
 
 ```
-
-
-
-#### Run SVM & RF Classification
-```
-python3 scripts/classification.py -d trento
-python3 scripts/classification.py -d bcss
-python3 scripts/classification.py -d sm
-```
-
-#### Calculate and Save Uncertainty maps for all the output/*.npy files
-```
-python3 scripts/calculate_uncertainties.py
-```
-
-### Output .npy, logs and uncertainty images files are saved at :
-
+### Structure
+Save the classification probability .npy files for which you want to calculate uncertainties in the following structure:
 ```
 uncertainty
 │   
 └───outputs
     │   
-    └───trento
-    │   │   trento.logs
-    │   │   trento.npy
-    │   └───images
-    │   
-    └───bcss
-    |   │   bcss.logs
-    |   │   bcss.npy
-    |   └───images
+    └───<dataset-name1>
+    │   └───classification
+    |       |    <dataset-name1>_<classifier_name1>.npy
+    |       |    <dataset-name1>_<classifier_name2>.npy
     |
-    └───signalModulation
-        │   ignal_modulation.logs
-        │   ignal_modulation.npy
-        └───images
+    └───<dataset-name2>
+    │   └───classification
+    |       |    <dataset-name2>_<classifier_name1>.npy
+    |       |    <dataset-name2>_<classifier_name2>.npy
+
+```
+## Uncertainty evaluation
+
+To calculate and save uncertainties for all the ```outputs/<dataset-name>/classification/*.npy``` files, run the following command:
+```
+python3 scripts/calculate_uncertainties.py
 ```
 
+### Output structure
+The uncertainties should be saved in the following structure:
+```
+uncertainty
+│   
+└───outputs
+    │   
+    └───<dataset-name1>
+    │   └───uncertainties
+    |       └───<classifier_name1>
+    |       |    |     <dataset-name1>_<classifier_name1>_<uncertainty-measurement1>.npy
+    |       |    |     <dataset-name1>_<classifier_name1>_<uncertainty-measurement2>.npy
+    |       |
+    |       └───<classifier_name2>
+    |            |     <dataset-name1>_<classifier_name2>_<uncertainty-measurement1>.npy
+    |            |     <dataset-name1>_<classifier_name2>_<uncertainty-measurement2>.npy
+
+```
+
+### Analysis 
+To run analysis for Trento, signal modulation, and BCSS, execute the following commands:
+```
+python3 scripts trento_analysis.py
+python3 scripts signalModulation_analysis.py
+python3 scripts bcss_analysis.py
+```
+The output plots and maps will be saved under ```outputs/<dataset-name>/images/*.npy```.
 ### To do
  - Logging and documentation
  - Investigate more efficient way to calculate maximum variance (dynamic programming?)
  - scikit-learn  Decision Trees modification for uncertainty loss
-
-#### outputs directory:
-
-```
-outputs/dataset-name/classification/dataset-name_classifier-name.npy
-outputs/dataset-name/uncertainties/dataset-name_classifier-name_uncertainty-name.npy
-outputs/dataset-name/images/ddataset-name_classifier-name_uncertainty-name_map.eps
-outputs/dataset-name/images/dataset-name_classifier-name_plots.eps
-```
-#### scripts structure:
-``` classification.py ``` -> not neccessary to include all classfication scripts (since they diverge a lot and it not straight forward to access the dataset to run them) we can make available our classification's predictions.
-
-``` calculate_uncertainties.py ```-> reads a file (in outputs/classification) with .npy predictions' probabilities and saves a new .npy in the outputs/uncertainties folder (or somewhere else) - no plots or maps since this depends on the dataset.
-
-``` dataset1_config.py ``` -> configurations for dataset 1
-
-``` dataset1_analysis.py ``` -> analysis for dataset 1
-
-``` dataset1_config.py ``` -> configurations for dataset 2
-
-``` dataset1_analysis.py ``` -> analysis for dataset 2
-
-
 
 

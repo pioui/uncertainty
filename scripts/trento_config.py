@@ -39,6 +39,7 @@ logging.basicConfig(filename=f"{outputs_dir}{dataset_name}_logs.log")
 labels = ["Unknown", "A.Trees", "Buildings", "Ground", "Wood", "Vineyards", "Roads"]
 
 color = ["#22181c", "#073B4C", "#F78C6B", "#FFD166", "#06D6A0", "#118AB2", "#EF476F"]
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 logger.info(f"Dataset name: {dataset_name} ")
