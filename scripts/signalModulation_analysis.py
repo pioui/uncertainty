@@ -1,3 +1,10 @@
+"""
+Script for generating uncertainty analysis plots for signal modulation dataset
+
+Usage:
+  python3 scripts/signalModulation_analysis.py 
+
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
