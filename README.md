@@ -2,23 +2,31 @@
 A repository for modified variance as uncertainty measure
 by Saloua & Pigi
 
-#### Create conda envirioment
+## Set up
+
+### Envirioment
+
+If you haven't created it already, create conda envirioment 
 ```
 conda env create -f environment.yml
+```
+Activate envirioment
+```
 conda activate uncertainty
 ```
 
-#### Install
+### Installation
+
+Install python package for uncertainty:
 ```
 python3 setup.py build install
 ```
-#### Install - editable version
+Or if you plan to change anthing under uncertainty/uncertainty folder install editable version
 ```
 pip install -e .
 ```
-
-#### Edit data directories and output at the configurations files :
-
+### Configuaration
+Edit data directories and output at the configurations files for each dataset you want to use:
 ```
 uncertainty
 │   
@@ -28,8 +36,8 @@ uncertainty
     │   signalModulation_config.py
 
 ```
-
-#### Save classification probabilities .npy files in the following structure
+### Structure
+Save classification probabilities .npy files for which you want to calculate uncertainties in the following structure
 ```
 uncertainty
 │   
@@ -46,11 +54,14 @@ uncertainty
     |       |    <dataset-name2>_<classifier_name2>.npy
 
 ```
+## Uncertainty evaluation
 
-#### Calculate and Save Uncertainty for all the ``` outputs/<dataset-name>/classification/*.npy``` files
+Calculate and Save Uncertainty for all the ``` outputs/<dataset-name>/classification/*.npy``` files
 ```
 python3 scripts/calculate_uncertainties.py
 ```
+
+### Output structure
 The uncertainties are should be saved in the following structure
 
 ```
@@ -70,7 +81,9 @@ uncertainty
 
 ```
 
-#### Analysis for trento, signal modulation and bcss
+### Analysis 
+
+Run analysis for trento, signal modulation and bcss
 
 ```
 python3 scripts trento_analysis.py
