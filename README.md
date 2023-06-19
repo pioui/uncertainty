@@ -25,22 +25,50 @@ uncertainty
 └───scripts
     │   trento_config.py
     │   bcss_config.py
-    │   singal_modulation_config.py
+    │   signalModulation_config.py
 
 ```
 
 
 
-#### Run SVM & RF Classification
+#### Save classification probabilities .npy files in the following structure
 ```
-python3 scripts/classification.py -d trento
-python3 scripts/classification.py -d bcss
-python3 scripts/classification.py -d sm
+uncertainty
+│   
+└───outputs
+    │   
+    └───<dataset-name1>
+    │   └───classification
+    |       |    <dataset-name1>_<classifier_name1>.npy
+    |       |    <dataset-name1>_<classifier_name2>.npy
+    |
+    └───<dataset-name2>
+    │   └───classification
+    |       |    <dataset-name2>_<classifier_name1>.npy
+    |       |    <dataset-name2>_<classifier_name2>.npy
+
 ```
 
-#### Calculate and Save Uncertainty maps for all the output/*.npy files
+#### Calculate and Save Uncertainty for all the outputs/<dataset-name>/classification/*.npy files
 ```
 python3 scripts/calculate_uncertainties.py
+```
+The uncertainties are should be saved in the following structure
+
+```
+uncertainty
+│   
+└───outputs
+    │   
+    └───<dataset-name1>
+    │   └───uncertainties
+    |       └───<classifier_name1>
+    |             |    <dataset-name1>_<classifier_name1>_<uncertainty-measurement1>.npy
+    |             |    <dataset-name1>_<classifier_name1>_<uncertainty-measurement2>.npy
+    |       └───<classifier_name2>
+    |             |    <dataset-name1>_<classifier_name2>_<uncertainty-measurement1>.npy
+    |             |    <dataset-name1>_<classifier_name2>_<uncertainty-measurement2>.npy
+
 ```
 
 ### Output .npy, logs and uncertainty images files are saved at :
