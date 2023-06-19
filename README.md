@@ -73,17 +73,17 @@ uncertainty
 
 #### outputs directory:
 ```
-outputs/classification/dataset_classifier.npy
-outputs/uncertainty/dataset_classifier.npy
-outputs/images/dataset_classifier_map.eps
-outputs/images/dataset_classifier_plots.eps
+outputs/classification/dataset-name_classifier-name.npy
+outputs/uncertainty/dataset-name_classifier-name.npy
+outputs/images/dataset-name_classifier-name_map.eps
+outputs/images/dataset-name_classifier-name_plots.eps
 ```
  OR
 ```
-outputs/dataset/classification/dataset_classifier.npy
-outputs/dataset/uncertainty/dataset_classifier.npy
-outputs/dataset/images/dataset_classifier_map.eps
-outputs/dataset/images/dataset_classifier_plots.eps
+outputs/dataset-name/classification/dataset-name_classifier-name.npy
+outputs/dataset-name/uncertainty/dataset-name_classifier-name.npy
+outputs/dataset-name/images/ddataset-name_classifier-name_map.eps
+outputs/dataset-name/images/dataset-name_classifier-name_plots.eps
 ```
 #### scripts structure:
 ``` classification.py ``` -> not neccessary to include all classfication scripts (since they diverge a lot and it not straight forward to access the dataset to run them) we can make available our classification's predictions.
