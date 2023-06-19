@@ -1,19 +1,15 @@
 """
-Script for Generating Uncertainty Maps: BCSS and Trento Datasets
-With a focus on spatially represented data, these uncertainty maps provide valuable visual representations.
-TODO: rename file
+Script for calculate  uncertainties for all classifications on the outputs folder.
 
 Usage:
-  python3 scripts/calculate_uncertainties_maps.py 
+  python3 scripts/calculate_uncertainties.py 
 
 """
-import matplotlib.pyplot as plt
 import os
+from sklearn.metrics import accuracy_score
 import numpy as np
-from matplotlib import colors
-from uncertainty.compatibility_matrix import calculate_compatibility_matrix
-import matplotlib.patches as mpatches
 
+from uncertainty.compatibility_matrix import calculate_compatibility_matrix
 from uncertainty.uncertainty_measurements import (
     geometry_based_uncertainty,
     variance,
@@ -23,316 +19,62 @@ from uncertainty.uncertainty_measurements import (
 )
 
 
-for project_name in os.listdir("outputs/"):
-    if project_name == "trento":
-        #continue
+for dataset_name_ in os.listdir("outputs/"):
+    if dataset_name_ == "trento":
         from trento_config import *
-        location = "bottom"
-        orientation = "horizontal"
-        col = 6
-        borderaxespad =-2
-        columnspacing = 0.5
-    elif project_name == "bcss":
-        #continue
+
+    elif dataset_name_ == "bcss":
         from bcss_config import *
-        location = "right"
-        orientation = "vertical"
-        col = 3
-        borderaxespad =-3.25
-        columnspacing = 1.25
 
+    elif "signalModulation" in dataset_name_:
+        from signalModulation_config import *
+        if SNR != int(dataset_name_.split('_')[0].split('-')[-1]):
+            print(f"Uncertainties will be calculated only for {dataset_name}, if you want another SNR for this dataset please change the configuration file")
+            continue
     else:
+        print(f'You need to implement the dataset and configuration for {dataset_name}')
         continue
-
-    X, y = dataset.full_dataset  
+    
+    X, y = dataset.test_dataset
     y_true = y.reshape(-1)
 
-    acc_dict = []
-    for file in os.listdir(os.path.join(outputs_dir)):
-        #if 'glcm' not in file:
-        #    continue
-        
-        if 'test' in file:
-            continue
-        
-        if 'clf' in file:
-            continue
-        
-        #if 'SVM' in file:
-        #    continue
-        
-        if 'GP' in file:
-            continue
+    if not os.path.exists(compatibility_matrix_file):
+        print(f"Calculating compatibility matrix ...")
+        compatibility_matrix = calculate_compatibility_matrix(X[y_true!=0,:], y[y_true!=0], "energy", len(np.unique(y_true)))#[1:, 1:]
+        np.save(compatibility_matrix_file, compatibility_matrix)
+    else:
+        compatibility_matrix= np.load(compatibility_matrix_file)
+    print(f'Dataset: {dataset_name}')
+    print(f" Ω_H = ")
+    print(compatibility_matrix)
+
+    print(f"Calculating uncertenties for {dataset_name} predictions...")
+
+    for file in os.listdir(os.path.join(classifications_dir)):
+        model_name = file.split(".")[0]
         
         if os.path.splitext(file)[-1].lower() == ".npy":
-            if 'OPT' in file:
-                if 'new' in file:
-                    model_name = file.split("_")[-2] + '_OPT_new'
-                elif 'glcm' in file:
-                    model_name = file.split("_")[-3] + '_OPT_GLCM'
-                else:
-                    model_name = file.split("_")[-2] + '_OPT'
-            else:
-                model_name = file.split("_")[-1].split(".")[0]
-                
-            y_pred_prob = np.load(os.path.join(outputs_dir, file))
-            y_pred_max_prob = y_pred_prob.max(1)
-            y_pred = y_pred_prob.argmax(1) + 1
-            
-            print(y_pred_prob.shape[1])
-            if y_pred_prob.shape[1] == 7:
-                y_pred_prob = y_pred_prob[:,:-1]/np.transpose(np.tile(np.sum(y_pred_prob, axis =1), (6,1)))
+            y_pred_prob = np.load(os.path.join(classifications_dir, file))
+        else:
+            continue
+        
+        uncertainties_folder_dir = os.path.join(uncertainties_dir,model_name)
+        if not os.path.exists(uncertainties_folder_dir):
+            os.makedirs(uncertainties_folder_dir)
+        
+        GU = geometry_based_uncertainty(y_pred_prob)
+        np.save(f"{uncertainties_folder_dir}/{model_name}_GBU.npy", GU)
 
-            if project_name == "bcss" and y_pred_prob.shape[1] == 6:
-                y_pred_prob = y_pred_prob[:,:-1]/np.transpose(np.tile(np.sum(y_pred_prob, axis =1), (5,1)))
+        H = shannon_entropy(y_pred_prob)
+        np.save(f"{uncertainties_folder_dir}/{model_name}_ENTROPY.npy", H)
 
-            values = np.unique(y_pred.ravel())
-            patches = [mpatches.Patch(color=color[i+1], label=labels[i+1].format(l=values[i]) ) for i in range(len(values)) ]
-            plt.figure(dpi=500)
-            plt.imshow(
-                y_pred.reshape(dataset.shape),
-                interpolation="nearest",
-                cmap=colors.ListedColormap(color[1:]),
-            )
-            plt.axis("off")
-            plt.legend(handles=patches, loc=8, ncol = col, fontsize='small', borderaxespad=borderaxespad, columnspacing = columnspacing) #, mode = "expand"
-            plt.savefig(
-                f"{images_dir}{model_name}_PREDICTIONS.eps",
-                bbox_inches="tight",
-                pad_inches=0,
-                dpi=500,
-            )
-
-            y_true[0] = 0
-            plt.figure(dpi=500)
-            plt.imshow(
-                y_true.reshape(dataset.shape),
-                interpolation="nearest",
-                cmap=colors.ListedColormap(color),
-            )
-            plt.axis("off")
-            plt.savefig(
-                f"{images_dir}{model_name}_GT.eps",
-                bbox_inches="tight",
-                pad_inches=0,
-                dpi=500,
-            )
-            
-            GU = geometry_based_uncertainty(y_pred_prob).reshape(dataset.shape)
-
-            plt.figure(dpi=500)
-            plt.imshow(
-                GU,
-                cmap="turbo",
-                vmin=0,
-                vmax=1,
-            )
-            plt.axis("off")
-            cbar = plt.colorbar(location = location, orientation = orientation, pad = 0.01)
-            cbar.ax.tick_params(labelsize=12)
-            plt.savefig(
-                f"{images_dir}{model_name}_GBU.eps",
-                bbox_inches="tight",
-                pad_inches=0,
-                dpi=500,
-            )
-
-            plt.figure(dpi=500)
-            plt.imshow(
-                variance(y_pred_prob).reshape(dataset.shape),
-                cmap="turbo",
-                vmin=0,
-                vmax=1,
-            )
-            plt.axis("off")
-            cbar = plt.colorbar(location = location, orientation = orientation, pad = 0.01)
-            cbar.ax.tick_params(labelsize=12)
-            plt.savefig(
-                f"{images_dir}{model_name}_VARIANCE.eps",
-                bbox_inches="tight",
-                pad_inches=0,
-                dpi=500,
-            )
-
-            H = shannon_entropy(y_pred_prob).reshape(dataset.shape)
-            plt.figure(dpi=500)
-            plt.imshow(
-                H,
-                cmap="turbo",
-                vmin=0,
-                vmax=1,
-            )
-
-            plt.axis("off")
-            cbar = plt.colorbar(location = location, orientation = orientation, pad = 0.01)#location="top"
-            cbar.ax.tick_params(labelsize=12)
-            plt.savefig(
-                f"{images_dir}{model_name}_ENTROPY.eps",
-                bbox_inches="tight",
-                pad_inches=0,
-                dpi=500,
-            )
-
-            # plt.figure(dpi=500)
-            # plt.imshow(
-            #     semantic_based_uncertainty(y_pred_prob, compatibility_matrix).reshape(
-            #         dataset.shape
-            #     ),
-            #     cmap="turbo",
-            #     vmin=0, 
-            #     vmax=1
-            # )
-            # plt.axis("off")
-            # #cbar = plt.colorbar(location = location, orientation = orientation, pad = 0.01)
-            # #cbar.ax.tick_params(labelsize=12)
-            # plt.savefig(
-            #     f"{images_dir}{model_name}_SBU_manual1.eps",
-            #     bbox_inches="tight",
-            #     pad_inches=0,
-            #     dpi=500,
-            # )
-
-            # plt.figure(dpi=500)
-            # plt.imshow(
-            #     semantic_based_uncertainty(y_pred_prob, compatibility_matrix1).reshape(
-            #         dataset.shape
-            #     ),
-            #     cmap="turbo",
-            #     vmin=0, 
-            #     vmax=1
-            # )
-            # plt.axis("off")
-            # #cbar = plt.colorbar(location = location, orientation = orientation, pad = 0.01)
-            # #cbar.ax.tick_params(labelsize=12)
-            # plt.savefig(
-            #     f"{images_dir}{model_name}_SBU_manual2.eps",
-            #     bbox_inches="tight",
-            #     pad_inches=0,
-            #     dpi=500,
-            # )
-
-
-            #compatibility_matrix = calculate_compatibility_matrix(X, y, "JS")[1:, 1:]
-            #compatibility_matrix = compatibility_matrix[1:, 1:]
-            GU_fr = FR_based_uncertainty(y_pred_prob).reshape(dataset.shape)
-            plt.figure(dpi=500)
-            plt.imshow(
-                GU_fr,
-                cmap="turbo",
-                vmin=0, 
-                vmax=1
-            )
-            plt.axis("off")
-            cbar = plt.colorbar(location = location, orientation = orientation, pad = 0.01)
-            cbar.ax.tick_params(labelsize=12)
-            plt.savefig(
-                f"{images_dir}{model_name}_GBU_FR.eps",
-                bbox_inches="tight",
-                pad_inches=0,
-                dpi=500,
-            )
-
-
-            # compatibility_matrix = calculate_compatibility_matrix(X, y, "KL")[1:, 1:]
-            # #compatibility_matrix = compatibility_matrix[1:, 1:]
-            # plt.figure(dpi=500)
-            # plt.imshow(
-            #     semantic_based_uncertainty(y_pred_prob, compatibility_matrix).reshape(
-            #         dataset.shape
-            #     ),
-            #     cmap="turbo",
-            #     #vmin=0, 
-            #     #vmax=1
-            # )
-            # plt.axis("off")
-            # cbar = plt.colorbar(location = location, orientation = orientation, pad = 0.01)
-            # cbar.ax.tick_params(labelsize=12)
-            # plt.savefig(
-            #     f"{images_dir}{model_name}_SBU_KL.eps",
-            #     bbox_inches="tight",
-            #     pad_inches=0,
-            #     dpi=500,
-            # )
-
-            print(X.shape)
-            compatibility_matrix = calculate_compatibility_matrix(X[y_true!=0,:], y[y_true!=0], "energy", len(np.unique(y_pred)))#[1:, 1:]
-            SU = semantic_based_uncertainty(y_pred_prob, compatibility_matrix).reshape(
-                    dataset.shape
-                )
-            #compatibility_matrix = compatibility_matrix[1:, 1:]
-            plt.figure(dpi=500)
-            su_plt = plt.imshow(
-                SU,
-                cmap="turbo",
-                vmin=0, 
-                vmax=1
-            )
-            plt.axis("off")
-            cbar = plt.colorbar(location = location, orientation = orientation, pad = 0.01)
-            cbar.ax.tick_params(labelsize=12)
-            plt.savefig(
-                f"{images_dir}{model_name}_SBU_energy.eps",
-                bbox_inches="tight",
-                pad_inches=0,
-                dpi=500,
-            )
-            
-            
-            # draw a new figure and replot the colorbar there
-            fig,ax = plt.subplots(dpi=500)
-            cbar = plt.colorbar(su_plt, location = location, orientation = orientation, pad = 0.01)
-            cbar.ax.tick_params(labelsize=12)
-            ax.remove()
-            plt.savefig(f"{images_dir}{model_name}_onlycbar.eps" ,bbox_inches='tight')
-
-
-            plt.figure(dpi=500)
-            plt.imshow(
-                GU - H,
-                cmap="turbo",
-                vmin=-1,
-                vmax=1,
-            )
-            plt.axis("off")
-            cbar = plt.colorbar(location = location, orientation = orientation, pad = 0.01)
-            cbar.ax.tick_params(labelsize=12)
-            plt.savefig(
-                f"{images_dir}{model_name}_DIFF_GBU_H.eps",
-                bbox_inches="tight",
-                pad_inches=0,
-                dpi=500,
-            )
-            
-            plt.figure(dpi=500)
-            plt.imshow(
-                GU - GU_fr,
-                cmap="turbo",
-                vmin=-1,
-                vmax=1,
-            )
-            plt.axis("off")
-            cbar = plt.colorbar(location = location, orientation = orientation, pad = 0.01)
-            cbar.ax.tick_params(labelsize=12)
-            plt.savefig(
-                f"{images_dir}{model_name}_DIFF_GBU_GUFR.eps",
-                bbox_inches="tight",
-                pad_inches=0,
-                dpi=500,
-            )
-
-            plt.figure(dpi=500)
-            plt.imshow(
-                GU - SU,
-                cmap="turbo",
-                vmin=-1,
-                vmax=1,
-            )
-            plt.axis("off")
-            cbar = plt.colorbar(location = location, orientation = orientation, pad = 0.01)
-            cbar.ax.tick_params(labelsize=12)
-            plt.savefig(
-                f"{images_dir}{model_name}_DIFF_GBU_SU.eps",
-                bbox_inches="tight",
-                pad_inches=0,
-                dpi=500,
-            )
+        VAR = variance(y_pred_prob)
+        np.save(f"{uncertainties_folder_dir}/{model_name}_VARIANCE.npy", VAR)
+        
+        GU_fr = FR_based_uncertainty(y_pred_prob)
+        np.save(f"{uncertainties_folder_dir}/{model_name}_GBU_FR.npy", GU_fr)
+        
+        SU = semantic_based_uncertainty(y_pred_prob, compatibility_matrix)
+        np.save(f"{uncertainties_folder_dir}/{model_name}_SBU_energy.npy", SU)
+        
+    print("-------------------------------------------------------------------")

@@ -60,7 +60,7 @@ uncertainty
     |   │   bcss.npy
     |   └───images
     |
-    └───signal_modulation
+    └───signalModulation
         │   ignal_modulation.logs
         │   ignal_modulation.npy
         └───images
@@ -72,17 +72,11 @@ uncertainty
  - scikit-learn  Decision Trees modification for uncertainty loss
 
 #### outputs directory:
-```
-outputs/classification/dataset-name_classifier-name.npy
-outputs/uncertainty/dataset-name_classifier-name.npy
-outputs/images/dataset-name_classifier-name_map.eps
-outputs/images/dataset-name_classifier-name_plots.eps
-```
- OR
+
 ```
 outputs/dataset-name/classification/dataset-name_classifier-name.npy
-outputs/dataset-name/uncertainty/dataset-name_classifier-name.npy
-outputs/dataset-name/images/ddataset-name_classifier-name_map.eps
+outputs/dataset-name/uncertainties/dataset-name_classifier-name_uncertainty-name.npy
+outputs/dataset-name/images/ddataset-name_classifier-name_uncertainty-name_map.eps
 outputs/dataset-name/images/dataset-name_classifier-name_plots.eps
 ```
 #### scripts structure:

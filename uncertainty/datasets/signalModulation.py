@@ -25,7 +25,7 @@ def normalize(x):
     assert np.unique(xn.max(axis=0)[0] == 1.0)
     return xn
 
-class signal_modulation_dataset:
+class signalModulation_dataset:
     def __init__(
         self, data_dir, samples_per_class=200, train_size=0.2) -> None:
         super().__init__()
@@ -73,7 +73,7 @@ class signal_modulation_dataset:
 
 if __name__ == "__main__":
 
-    DATASET = signal_modulation_dataset(data_dir="/home/pigi/data/signal_modulation/")
+    DATASET = signalModulation_dataset(data_dir="/home/pigi/data/signal_modulation/")
 
     x, y = DATASET.full_dataset  # [5731136] 0 to 20
     print(x.shape, y.shape, np.unique(y))
