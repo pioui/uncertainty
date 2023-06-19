@@ -72,21 +72,21 @@ uncertainty
  - scikit-learn  Decision Trees modification for uncertainty loss
 
 #### outputs directory:
-
-- outputs/classification/dataset_classifier.npy
-- outputs/uncertainty/dataset_classifier.npy
-- outputs/images/dataset_classifier_map.eps
-- outputs/images/dataset_classifier_plots.eps
-
+```
+outputs/classification/dataset_classifier.npy
+outputs/uncertainty/dataset_classifier.npy
+outputs/images/dataset_classifier_map.eps
+outputs/images/dataset_classifier_plots.eps
+```
  OR
-
-- outputs/dataset/classification/dataset_classifier.npy
-- outputs/dataset/uncertainty/dataset_classifier.npy
-- outputs/dataset/images/dataset_classifier_map.eps
-- outputs/dataset/images/dataset_classifier_plots.eps
-
+```
+outputs/dataset/classification/dataset_classifier.npy
+outputs/dataset/uncertainty/dataset_classifier.npy
+outputs/dataset/images/dataset_classifier_map.eps
+outputs/dataset/images/dataset_classifier_plots.eps
+```
 #### scripts structure:
-- classification.py -> not neccessary to include all classfication scripts (since they diverge a lot and it not straight forward to access the dataset to run them) we can make available our classification's predictions.
+- ``` classification.py ``` -> not neccessary to include all classfication scripts (since they diverge a lot and it not straight forward to access the dataset to run them) we can make available our classification's predictions.
 - calculate_uncertainties.py -> reads a file (in outputs/classification) with .npy predictions' probabilities and saves a new .npy in the outputs/uncertainties folder (or somewhere else) - no plots or maps since this depends on the dataset.
 
 - dataset1_config.py -> configurations for dataset 1
