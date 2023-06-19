@@ -10,7 +10,7 @@ from scipy.io import loadmat
 
 from uncertainty.datasets import signalModulation_dataset
 
-SNR = 15
+SNR = 50
 
 dataset_name = f"signalModulation-SNR-{SNR}"
 outputs_dir = f"outputs/{dataset_name}/"
