@@ -25,7 +25,7 @@ args = parser.parse_args()
 dataset_name = args.dataset
 
 if dataset_name == "bcss":
-    from bcss_config import dataset, outputs_dir, project_name
+    from bcss_config import dataset, outputs_dir, classifications_dir
     C = 100
     gamma = 0.1
     n_estimators=300
@@ -37,7 +37,7 @@ if dataset_name == "bcss":
     max_features="sqrt"
     verbose=False
 elif dataset_name == "trento":
-    from trento_config import dataset, outputs_dir, project_name
+    from trento_config import dataset, outputs_dir, classifications_dir
     C = 100
     gamma = 0.1
     n_estimators=100
@@ -49,7 +49,7 @@ elif dataset_name == "trento":
     max_features="sqrt"
     verbose=False
 elif dataset_name == "sm":
-    from signal_modulation_config import dataset, outputs_dir, project_name
+    from signalModulation_config import dataset, outputs_dir, classifications_dir
     C = 100
     gamma = 0.1
     n_estimators=100
@@ -79,6 +79,7 @@ logger.info(f"Total dataset shape: {X.shape}, {y.shape}, {np.unique(y)}")
 
 # ----- SVM -----#
 print("Fitting SVM ...")
+classifier_name = 'SVM'
 
 if dataset_name == "bcss":
     clf_svm = ParallelPostFit(estimator=SVC(probability=True),
@@ -88,8 +89,6 @@ else:
     
 clf_svm.fit(X_train, y_train)
 svm_accuracy = clf_svm.score(X_test, y_test)
-
-np.save(f"{outputs_dir}{project_name}_clf_svm.npy", clf_svm)
 
 print("Predicting SVM ...")
 
@@ -101,7 +100,8 @@ svm_confusion_matrix = np.around(
     / svm_confusion_matrix.sum(axis=1)[:, np.newaxis],
     decimals=2,
 )
-np.save(f"{outputs_dir}{project_name}_SVM_test.npy", y_pred)
+
+# np.save(f"{classifications_dir}{dataset_name}-test_{classifier_name}.npy", y_pred)
 
 print("Predicting Image SVM ...")
 
@@ -113,14 +113,15 @@ else:
 logger.info(f"SVM Accuracy : {svm_accuracy}")
 logger.info(f"Confusion Matrix: {svm_confusion_matrix}")
 np.savetxt(
-    f"{outputs_dir}{project_name}_SVM_confusion_matrix.csv",
+    f"{classifications_dir}{dataset_name}_{classifier_name}_confusion_matrix.csv",
     svm_confusion_matrix,
     delimiter=",",
 )
-np.save(f"{outputs_dir}{project_name}_SVM.npy", y_pred)
+np.save(f"{classifications_dir}{dataset_name}_{classifier_name}.npy", y_pred)
 
 # ----- SVM -----#
 print("Fitting Optimal SVM ...")
+classifier_name = 'optSVM'
 
 if dataset_name == "bcss":
     clf_svm = ParallelPostFit(estimator=SVC(C=C, kernel="rbf", gamma = gamma,  verbose=False, probability=True),
@@ -144,7 +145,7 @@ svm_confusion_matrix = np.around(
     / svm_confusion_matrix.sum(axis=1)[:, np.newaxis],
     decimals=2,
 )
-np.save(f"{outputs_dir}{project_name}_SVM_OPT_test.npy", y_pred)
+# np.save(f"{classifications_dir}{dataset_name}-test_{classifier_name}.npy", y_pred)
 
 print("Predicting Image Optimal SVM ...")
 
@@ -156,16 +157,16 @@ else:
 logger.info(f"SVM OPT Accuracy : {svm_accuracy}")
 logger.info(f"Confusion Matrix: {svm_confusion_matrix}")
 np.savetxt(
-    f"{outputs_dir}{project_name}_SVM_OPT_confusion_matrix.csv",
+    f"{classifications_dir}{dataset_name}_{classifier_name}_confusion_matrix.csv",
     svm_confusion_matrix,
     delimiter=",",
 )
-np.save(f"{outputs_dir}{project_name}_SVM_OPT.npy", y_pred)
+np.save(f"{classifications_dir}{dataset_name}_{classifier_name}.npy", y_pred)
 
 # ----- RF -----#
-
 print("Fitting RF ...")
-  
+classifier_name = 'RF'
+
 clf_rf = RandomForestClassifier(n_jobs = 5)
 
 clf_rf.fit(X_train, y_train)
@@ -180,22 +181,23 @@ rf_confusion_matrix = np.around(
     decimals=2,
 )
 
+# np.save(f"{classifications_dir}{dataset_name}-test_{classifier_name}.npy", y_pred)
 y_pred = clf_rf.predict_proba(X)
-np.save(f"{outputs_dir}{project_name}_RF_test.npy", y_pred)
 
 logger.info(f"RF Accuracy : {rf_accuracy}")
 logger.info(f"Confusion Matrix: {rf_confusion_matrix}")
 np.savetxt(
-    f"{outputs_dir}{project_name}_RF_confusion_matrix.csv",
+    f"{classifications_dir}{dataset_name}_{classifier_name}_confusion_matrix.csv",
     rf_confusion_matrix,
     delimiter=",",
 )
-np.save(f"{outputs_dir}{project_name}_RF.npy", y_pred)
+np.save(f"{classifications_dir}{dataset_name}_{classifier_name}.npy", y_pred)
 
 # ----- RF -----#
 
 print("Fitting Optimal RF ...")
-  
+classifier_name = 'optRF'
+
 clf_rf = RandomForestClassifier(
     n_estimators=n_estimators,
     criterion=criterion,
@@ -220,14 +222,15 @@ rf_confusion_matrix = np.around(
     decimals=2,
 )
 
+# np.save(f"{classifications_dir}{dataset_name}-test_{classifier_name}.npy", y_pred)
+
 y_pred = clf_rf.predict_proba(X)
-np.save(f"{outputs_dir}{project_name}_RF_OPT_test.npy", y_pred)
 
 logger.info(f"RF OPT Accuracy : {rf_accuracy}")
 logger.info(f"Confusion Matrix: {rf_confusion_matrix}")
 np.savetxt(
-    f"{outputs_dir}{project_name}_RF_OPT_confusion_matrix.csv",
+    f"{classifications_dir}{dataset_name}_{classifier_name}_confusion_matrix.csv",
     rf_confusion_matrix,
     delimiter=",",
 )
-np.save(f"{outputs_dir}{project_name}_RF_OPT.npy", y_pred)
+np.save(f"{classifications_dir}{dataset_name}_{classifier_name}.npy", y_pred)
