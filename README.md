@@ -66,12 +66,12 @@ uncertainty
         └───images
 ```
 
-#### To do
+### To do
  - Logging and documentation
  - Investigate more efficient way to calculate maximum variance (dynamic programming?)
  - scikit-learn  Decision Trees modification for uncertainty loss
 
-### outputs directory:
+#### outputs directory:
 
 - outputs/classification/dataset_classifier.npy
 - outputs/uncertainty/dataset_classifier.npy
@@ -85,15 +85,15 @@ uncertainty
 - outputs/dataset/images/dataset_classifier_map.eps
 - outputs/dataset/images/dataset_classifier_plots.eps
 
-### scripts structure:
-classification.py -> not neccessary to include all classfication scripts (since they diverge a lot and it not straight forward to access the dataset to run them) we can make available our classification's predictions.
-calculate_uncertainties.py -> reads a file (in outputs/classification) with .npy predictions' probabilities and saves a new .npy in the outputs/uncertainties folder (or somewhere else) - no plots or maps since this depends on the dataset.
+#### scripts structure:
+- classification.py -> not neccessary to include all classfication scripts (since they diverge a lot and it not straight forward to access the dataset to run them) we can make available our classification's predictions.
+- calculate_uncertainties.py -> reads a file (in outputs/classification) with .npy predictions' probabilities and saves a new .npy in the outputs/uncertainties folder (or somewhere else) - no plots or maps since this depends on the dataset.
 
-dataset1_config.py -> configurations for dataset 1
-dataset1_analysis.py -> analysis for dataset 1
+- dataset1_config.py -> configurations for dataset 1
+- dataset1_analysis.py -> analysis for dataset 1
 
-dataset1_config.py -> configurations for dataset 2
-dataset1_analysis.py -> analysis for dataset 2
+- dataset1_config.py -> configurations for dataset 2
+- dataset1_analysis.py -> analysis for dataset 2
 
 
 
