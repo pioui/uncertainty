@@ -10,11 +10,13 @@ from scipy.io import loadmat
 
 from uncertainty.datasets import signal_modulation_dataset
 
-project_name = "signal_modulation"
+SNR = 50
+project_name = f"signal_modulation_SNR_{SNR}"
 images_dir = f"outputs/{project_name}/images/"
 outputs_dir = f"outputs/{project_name}/"
 # data_dir = "/work/saloua/Datasets/signal_modulation/"
-data_dir = "/home/pigi/data/signal_modulation/"
+# data_dir = "/home/pigi/data/signal_modulation/"
+data_dir = f"/home/pigi/data/modulation_classification/MCNet_SNR_{SNR}/"
 
 if not os.path.exists(outputs_dir):
     os.makedirs(outputs_dir)
@@ -39,6 +41,9 @@ logger.info(f"Labels' colors: {color} ")
 logger.info(f"compatibilityy Matrix: {compatibility_matrix}")
 
 
-rxTestPredNumbers = loadmat(os.path.join(data_dir, "rxTestPredNumbers.mat"))["rxTestPredNumbers"]
-rxTestScores = loadmat(os.path.join(data_dir, "rxTestScores.mat"))["rxTestScores"]
-np.save(f"{outputs_dir}{project_name}_CNN.npy", rxTestScores)
+preds_file_here = f"{outputs_dir}{project_name}_CNN-calibrated.npy"
+preds_file = os.path.join(data_dir, f"MCNet_SNR_{SNR}_cal_preds.npy")
+
+if not os.path.exists(preds_file_here):
+    rxTestcalScores = np.load(preds_file)
+    np.save(preds_file_here, rxTestcalScores)
