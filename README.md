@@ -1,32 +1,31 @@
 # Uncertainty - Under Construction
-A repository for modified variance as uncertainty measure
-by Saloua & Pigi
+This repository contains a modified variance as an uncertainty measure, developed by Saloua & Pigi.
 
 ## Set up
 
 ### Envirioment
 
-If you haven't created it already, create conda envirioment 
+If you haven't created it already, please create a conda environment using the following command
 ```
 conda env create -f environment.yml
 ```
-Activate envirioment
+Activate the environment:
 ```
 conda activate uncertainty
 ```
 
 ### Installation
 
-Install python package for uncertainty:
+To install the Python package for uncertainty, execute the following command:
 ```
 python3 setup.py build install
 ```
-Or if you plan to change anthing under uncertainty/uncertainty folder install editable version
+Alternatively, if you plan to make changes under the uncertainty/uncertainty folder, install the editable version:
 ```
 pip install -e .
 ```
 ### Configuaration
-Edit data directories and output at the configurations files for each dataset you want to use:
+Edit the data directories and output configurations in the respective configuration files for each dataset you want to use:
 ```
 uncertainty
 │   
@@ -37,7 +36,7 @@ uncertainty
 
 ```
 ### Structure
-Save classification probabilities .npy files for which you want to calculate uncertainties in the following structure
+Save the classification probability .npy files for which you want to calculate uncertainties in the following structure:
 ```
 uncertainty
 │   
@@ -56,14 +55,13 @@ uncertainty
 ```
 ## Uncertainty evaluation
 
-Calculate and Save Uncertainty for all the ``` outputs/<dataset-name>/classification/*.npy``` files
+To calculate and save uncertainties for all the ```outputs/<dataset-name>/classification/*.npy``` files, run the following command:
 ```
 python3 scripts/calculate_uncertainties.py
 ```
 
 ### Output structure
-The uncertainties are should be saved in the following structure
-
+The uncertainties should be saved in the following structure:
 ```
 uncertainty
 │   
@@ -82,16 +80,13 @@ uncertainty
 ```
 
 ### Analysis 
-
-Run analysis for trento, signal modulation and bcss
-
+To run analysis for Trento, signal modulation, and BCSS, execute the following commands:
 ```
 python3 scripts trento_analysis.py
 python3 scripts signalModulation_analysis.py
 python3 scripts bcss_analysis.py
 ```
-Output plots and maps are saved under ``` outputs/<dataset-name>/images/*.npy ```
-
+The output plots and maps will be saved under ```outputs/<dataset-name>/images/*.npy```.
 ### To do
  - Logging and documentation
  - Investigate more efficient way to calculate maximum variance (dynamic programming?)
