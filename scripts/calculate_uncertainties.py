@@ -28,7 +28,7 @@ for dataset_name_ in os.listdir("outputs/"):
 
     elif "signalModulation" in dataset_name_:
         from signalModulation_config import *
-        if SNR != int(dataset_name_.split('_')[0].split('-')[-1]):
+        if dataSNR != int(dataset_name_.split('_')[0].split('-')[-1]):
             print(f"Uncertainties will be calculated only for {dataset_name}, if you want another SNR for this dataset please change the configuration file")
             continue
     else:
@@ -44,6 +44,12 @@ for dataset_name_ in os.listdir("outputs/"):
         np.save(compatibility_matrix_file, compatibility_matrix)
     else:
         compatibility_matrix= np.load(compatibility_matrix_file)
+
+    # Normalized:
+    # maxco = np.max(compatibility_matrix)
+    # minco = np.min(compatibility_matrix)
+    # compatibility_matrix= (compatibility_matrix-minco)/(maxco-minco)
+
     print(f'Dataset: {dataset_name}')
     print(f" Ω_H = ")
     print(compatibility_matrix)

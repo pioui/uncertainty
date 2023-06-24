@@ -1,5 +1,4 @@
 # Load the packages
-from keras.datasets import mnist
 from tensorflow import keras
 import tensorflow as tf
 import numpy as np
@@ -472,8 +471,8 @@ def MCE(conf, pred, true, bin_size = 0.1):
     return max(cal_errors)
 
 modelnoise = "MCNet_SNR_50" 
-datanoise = 'MCNet_SNR_50'
-mcdirectory = '/home/pigi/data/modulation_classfification'
+datanoise = 'MCNet_SNR_15'
+mcdirectory = '/home/pigi/data/modulation_classification'
 # Load labels and predictions from .mat files
 
 y_test_mat = scipy.io.loadmat(f'{mcdirectory}/{datanoise}/rxTestLabelsNumbers.mat')
@@ -540,27 +539,61 @@ print(y_preds_test)
 print(y_test)
 print(accuracy_score(y_true_test, y_preds_test))
 print(y_probs_test.shape)
+
 # Evaluate the uncalibrated model
 print("----- Uncalibrated Model -----")
 evaluate_model(y_true_test, y_probs_test)
+sumprobsum = np.sum(y_probs_test, axis=1)
+print(sumprobsum.shape)
+print(sumprobsum[sumprobsum>1.01].shape)
+print(sumprobsum[sumprobsum<0.99].shape)
+
 # Run and evaluate the calibration methods
 M = 10
 print("----- Temperature Scaling -----")
 y_probs_test_temp, _ = get_predictions(TemperatureScaling, y_logits_val, y_true_val, y_logits_test, y_true_test, M, "", "multi")
 evaluate_model(y_true_test, y_probs_test_temp)
+
 print("----- HistogramBinning -----")
 y_probs_test_hist, _ = get_predictions(HistogramBinning, y_logits_val, y_true_val, y_logits_test, y_true_test, M, "", "single", {'M':M})
 evaluate_model(y_true_test, y_probs_test_hist)
+sumprobsum = np.sum(y_probs_test_hist, axis=1)
+print(sumprobsum.shape)
+print(sumprobsum[sumprobsum>1.01].shape)
+print(sumprobsum[sumprobsum<0.99].shape)
+
 print("----- IsotonicRegression -----")
 y_probs_test_iso, _ = get_predictions(IsotonicRegression, y_logits_val, y_true_val, y_logits_test, y_true_test, M, "", "single", {'y_min':0, 'y_max':1})
 evaluate_model(y_true_test, y_probs_test_iso)
+sumprobsum = np.sum(y_probs_test_iso, axis=1)
+print(sumprobsum.shape)
+print(sumprobsum[sumprobsum>1.01].shape)
+print(sumprobsum[sumprobsum<0.99].shape)
+
 print("----- BetaCalibration -----")
 y_probs_test_beta, _ = get_predictions(BetaCalibration, y_logits_val, y_true_val, y_logits_test, y_true_test, M, "", "single", {'parameters':"abm"})
 evaluate_model(y_true_test, y_probs_test_beta)
+sumprobsum = np.sum(y_probs_test_beta, axis=1)
+print(sumprobsum.shape)
+print(sumprobsum[sumprobsum>1.01].shape)
+print(sumprobsum[sumprobsum<0.99].shape)
+
+print("----- Isotonic divided with the sum -----")
+
+probsums = np.sum(y_probs_test_iso, axis=1)
+norm_y_probs_test_iso = np.array([probline/probsum for probsum,probline in zip(probsums,y_probs_test_iso)])
+print(norm_y_probs_test_iso.shape)
+sumprobsum = np.sum(norm_y_probs_test_iso, axis=1)
+print(sumprobsum.shape)
+print(sumprobsum[sumprobsum>1.01].shape)
+print(sumprobsum[sumprobsum<0.99].shape)
+print(sumprobsum[sumprobsum==1].shape)
+evaluate_model(y_true_test, norm_y_probs_test_iso)
+
 
 # Save the results
 #! Change the name
-np.save(f"{mcdirectory}/{modelnoise}/{modelnoise}_{datanoise}_cal_preds.npy", y_probs_test_iso)
+np.save(f"{mcdirectory}/{modelnoise}/{modelnoise}_{datanoise}_cal_preds_sum1.npy", norm_y_probs_test_iso)
 
 # Plot reliability histograms
 accs_confs = gen_plots(y_logits_val, y_true_val, y_logits_test, y_true_test)

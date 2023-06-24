@@ -106,3 +106,5 @@ models/
 .ipynb_checkpoints
 
 todo.txt
+
+scripts/make_sm.py

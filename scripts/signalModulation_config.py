@@ -10,16 +10,18 @@ from scipy.io import loadmat
 
 from uncertainty.datasets import signalModulation_dataset
 
-SNR = 50
+dataSNR = 15
+modelSNR = 15
 
-dataset_name = f"signalModulation-SNR-{SNR}"
+classifier_name = f'CNN-calibrated-SNR-{modelSNR}'
+dataset_name = f"signalModulation-SNR-{dataSNR}"
 outputs_dir = f"outputs/{dataset_name}/"
 images_dir = f"{outputs_dir}images/"
 classifications_dir = f"{outputs_dir}classifications/"
 uncertainties_dir = f"{outputs_dir}uncertainties/"
 compatibility_matrix_file = f"{outputs_dir}{dataset_name}_omegaH.npy"
 
-data_dir = f"/home/pigi/data/modulation_classification/MCNet_SNR_{SNR}/"
+data_dir = f"/home/pigi/data/modulation_classification/MCNet_SNR_{dataSNR}/"
 
 if not os.path.exists(outputs_dir):
     os.makedirs(outputs_dir)
@@ -38,17 +40,32 @@ dataset = signalModulation_dataset(data_dir=data_dir)
 logging.basicConfig(filename=f"{outputs_dir}{dataset_name}_logs.log")
 
 labels = ["16QAM", "64QAM", "8PSK", "B-FM", "BPSK", "CPFSK", "DSB-AM", "GFSK", "PAM4", "QPSK", "SSB-AM"]
-color = ["#22181c", "#073B4C", "#F78C6B", "#FFD166", "#06D6A0", "#118AB2", "#EF476F", "#5dd9c1", "#ffe66d", "#e36397", "#8377d1"]
+# color = ["#22181c", "#073B4C", "#F78C6B", "#FFD166", "#06D6A0", "#118AB2", "#EF476F", "#5dd9c1", "#ffe66d", "#e36397", "#8377d1"]
+color =   [ "#1f77b4",  # blue
+    "#ff7f0e",  # orange
+    "#2ca02c",  # green
+    "#9467bd",  # purple
+    "#8c564b",  # brown
+    "#e377c2",  # pink
+    "#7f7f7f",  # gray
+    "#bcbd22",  # yellow-green
+    "#17becf",  # cyan
+    "#9edae5",   # light blue
+    "#d62728",  # red
+]
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 logger.info(f"Dataset name: {dataset_name} ")
 logger.info(f"Labels: {labels} ")
 logger.info(f"Labels' colors: {color} ")
 
+preds_file_here = f"{classifications_dir}/{dataset_name}_{classifier_name}.npy"
+preds_file = os.path.join(data_dir, f"MCNet_SNR_{modelSNR}_MCNet_SNR_{dataSNR}_cal_preds_sum1.npy")
 
-preds_file_here = f"{classifications_dir}/{dataset_name}_CNN-calibrated.npy"
-preds_file = os.path.join(data_dir, f"MCNet_SNR_{SNR}_cal_preds.npy")
+if not os.path.exists(preds_file):
+    print(f"Pridiction file {preds_file} does not exist.")
 
 if not os.path.exists(preds_file_here):
     rxTestcalScores = np.load(preds_file)
     np.save(preds_file_here, rxTestcalScores)
+
