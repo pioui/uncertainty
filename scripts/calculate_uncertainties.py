@@ -28,9 +28,7 @@ for dataset_name_ in os.listdir("outputs/"):
 
     elif "signalModulation" in dataset_name_:
         from signalModulation_config import *
-        if dataSNR != int(dataset_name_.split('_')[0].split('-')[-1]):
-            print(f"Uncertainties will be calculated only for {dataset_name}, if you want another SNR for this dataset please change the configuration file")
-            continue
+        print(f"Uncertainties will be calculated only for {dataset_name}, if you want another SNR for this dataset please change the configuration file")
     else:
         print(f'You need to implement the dataset and configuration for {dataset_name}')
         continue
@@ -54,7 +52,7 @@ for dataset_name_ in os.listdir("outputs/"):
     print(f" Ω_H = ")
     print(compatibility_matrix)
 
-    print(f"Calculating uncertenties for {dataset_name} predictions...")
+    print(f"Calculating uncertainties for {dataset_name} predictions...")
 
     for file in os.listdir(os.path.join(classifications_dir)):
         model_name = file.split(".")[0]

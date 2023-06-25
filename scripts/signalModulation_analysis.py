@@ -12,6 +12,10 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 
 from signalModulation_config import *
 
+
+print(f"Analysis for {dataset_name} tested on {classifier_name}, if you want another model on dataset please change the configuration file")
+
+
 X, y = dataset.test_dataset  
 y_true = y.reshape(-1)
 
@@ -44,9 +48,11 @@ for file in os.listdir(uncertainties_dir):
 
 y_pred = np.argmax(predicted_probs, axis=1)+1
 
+
+
 # Print accuracy
 accuracy = accuracy_score(y_true, y_pred)
-print(f"{classifier_name} train on {dataset_name} accuracy: {accuracy}")
+print(f"Accuracy: {accuracy}")
 
 # Plot distributions of uncertainties for misclassified points
 misclassified_indices = np.where(y_pred!=y_true)[0]

@@ -21,8 +21,9 @@ classifications_dir = f"{outputs_dir}classifications/"
 uncertainties_dir = f"{outputs_dir}uncertainties/"
 compatibility_matrix_file = f"{outputs_dir}{dataset_name}_omegaH.npy"
 
-data_dir = f"/home/pigi/data/modulation_classification/MCNet_SNR_{dataSNR}/"
-
+data_predir = "/home/pigi/data/modulation_classification/"
+data_dir = f"{data_predir}MCNet_SNR_{dataSNR}/"
+ 
 if not os.path.exists(outputs_dir):
     os.makedirs(outputs_dir)
 
@@ -40,7 +41,6 @@ dataset = signalModulation_dataset(data_dir=data_dir)
 logging.basicConfig(filename=f"{outputs_dir}{dataset_name}_logs.log")
 
 labels = ["16QAM", "64QAM", "8PSK", "B-FM", "BPSK", "CPFSK", "DSB-AM", "GFSK", "PAM4", "QPSK", "SSB-AM"]
-# color = ["#22181c", "#073B4C", "#F78C6B", "#FFD166", "#06D6A0", "#118AB2", "#EF476F", "#5dd9c1", "#ffe66d", "#e36397", "#8377d1"]
 color =   [ "#1f77b4",  # blue
     "#ff7f0e",  # orange
     "#2ca02c",  # green
@@ -60,7 +60,7 @@ logger.info(f"Labels: {labels} ")
 logger.info(f"Labels' colors: {color} ")
 
 preds_file_here = f"{classifications_dir}/{dataset_name}_{classifier_name}.npy"
-preds_file = os.path.join(data_dir, f"MCNet_SNR_{modelSNR}_MCNet_SNR_{dataSNR}_cal_preds_sum1.npy")
+preds_file = os.path.join(f"{data_predir}MCNet_SNR_{modelSNR}/", f"MCNet_SNR_{modelSNR}_MCNet_SNR_{dataSNR}_cal_preds_sum1.npy")
 
 if not os.path.exists(preds_file):
     print(f"Pridiction file {preds_file} does not exist.")
