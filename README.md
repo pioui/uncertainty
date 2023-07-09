@@ -1,5 +1,5 @@
-# Measures Of Uncertainty
-This repository contains a study in measures of uncertainty in classification. 
+# On Measures Of Uncertainty In Classification
+Geometry-based and homophily-based measures to assess the uncertainty of a pre-trained classifier.
 
 ## Set up
 
