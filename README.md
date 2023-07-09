@@ -24,6 +24,24 @@ Alternatively, if you plan to make changes under the uncertainty/uncertainty fol
 ```
 pip install -e .
 ```
+## Data preparation 
+
+To run this code, you'll need the following datasets:
+
+1. **Trento dataset:** [Download here](link-to-trento-dataset)
+2. **Modulation classification dataset:** The data produced from [this example](https://www.mathworks.com/help/deeplearning/ug/modulation-classification-with-deep-learning.html) with noise levels set to 15dB and 50dB.
+3. **BCSS dataset:** Download the image TCGA-D8-A1JG-DX1_xmin15677_ymin69205_MPP-0.2500 and the corresponding mask from the [BCSS repository](https://github.com/PathologyDataScience/BCSS).
+
+The user can download some classification outputs for the above mentioned datasets in [this Google Drive folder](https://drive.google.com/drive/u/0/folders/1XHM36H289swJfjZJSK0gbZiN9w_JTqfY). Or can use it's own classification outputs as long as they follow similar structrure.
+
+## Classification Outputs:
+
+You have two options for obtaining classification outputs:
+
+    Download pre-generated outputs: You can download pre-computed classification outputs for the datasets mentioned above from [this Google Drive folder](https://drive.google.com/drive/u/0/folders/1XHM36H289swJfjZJSK0gbZiN9w_JTqfY). Copy outputs/ folder inside uncertainty/ repository. 
+
+    Use your own classification outputs: If you have your own classification outputs, ensure they have a similar structure as the pre-generated outputs.
+
 ### Configuaration
 Edit the data directories and output configurations in the respective configuration files for each dataset you want to use:
 ```
