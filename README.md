@@ -29,8 +29,8 @@ pip install -e .
 To run this code, you'll need the following datasets:
 
 1. <ins> Trento dataset </ins>: [Download here](link-to-trento-dataset)
-2. Modulation classification dataset: The data produced from [this example](https://www.mathworks.com/help/deeplearning/ug/modulation-classification-with-deep-learning.html) with noise levels set to 15dB and 50dB.
-3. BCSS dataset: Download the image TCGA-D8-A1JG-DX1_xmin15677_ymin69205_MPP-0.2500 and the corresponding mask from the [BCSS repository](https://github.com/PathologyDataScience/BCSS).
+2. <ins> Modulation classification dataset </ins>: The data produced from [this example](https://www.mathworks.com/help/deeplearning/ug/modulation-classification-with-deep-learning.html) with noise levels set to 15dB and 50dB.
+3. <ins> BCSS dataset </ins>: Download the image TCGA-D8-A1JG-DX1_xmin15677_ymin69205_MPP-0.2500 and the corresponding mask from the [BCSS repository](https://github.com/PathologyDataScience/BCSS).
 
 The user can download some classification outputs for the above mentioned datasets in [this Google Drive folder](https://drive.google.com/drive/u/0/folders/1XHM36H289swJfjZJSK0gbZiN9w_JTqfY). Or can use it's own classification outputs as long as they follow similar structrure.
 
