@@ -1,5 +1,5 @@
-# Uncertainty - Under Construction
-This repository contains a modified variance as an uncertainty measure, developed by Saloua & Pigi.
+# On Measures Of Uncertainty In Classification
+Geometry-based and homophily-based measures to assess the uncertainty of a pre-trained classifier.
 
 ## Set up
 
@@ -87,9 +87,6 @@ python3 scripts signalModulation_analysis.py
 python3 scripts bcss_analysis.py
 ```
 The output plots and maps will be saved under ```outputs/<dataset-name>/images/*.npy```.
-### To do
- - Logging and documentation
- - Investigate more efficient way to calculate maximum variance (dynamic programming?)
- - scikit-learn  Decision Trees modification for uncertainty loss
 
+## References 
 
