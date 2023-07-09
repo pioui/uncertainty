@@ -43,6 +43,6 @@ color = ["#22181c", "#5dd9c1", "#ffe66d", "#e36397", "#8377d1", "#3b429f"]
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-logger.info(f"Project name: {project_name} ")
+logger.info(f"Project name: {dataset_name} ")
 logger.info(f"Labels: {labels} ")
 logger.info(f"Labels' colors: {color} ")
