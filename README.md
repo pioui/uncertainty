@@ -38,7 +38,7 @@ The user can download some classification outputs for the above mentioned datase
 
 You have two options for obtaining classification outputs:
 
-1. Download pre-generated outputs: You can download pre-computed classification outputs for the datasets mentioned above from [this Google Drive folder](https://drive.google.com/drive/u/0/folders/1XHM36H289swJfjZJSK0gbZiN9w_JTqfY). Copy outputs/ folder inside uncertainty/ repository. 
+1. Download pre-generated outputs: You can download pre-computed classification outputs for the datasets mentioned above from [this Google Drive folder](https://drive.google.com/drive/u/0/folders/1XHM36H289swJfjZJSK0gbZiN9w_JTqfY). Copy ```outputs/``` folder inside ```uncertainty/``` repository. 
 
 2. Use your own classification outputs: If you have your own classification outputs, ensure they have a similar structure as the pre-generated outputs.
 
