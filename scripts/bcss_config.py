@@ -28,7 +28,7 @@ if not os.path.exists(images_dir):
 samples_per_class = 100
 dataset = bcss_dataset(data_dir=data_dir, samples_per_class=samples_per_class)
 
-logging.basicConfig(filename=f"{outputs_dir}{project_name}_logs.log")
+logging.basicConfig(filename=f"{outputs_dir}{dataset_name}_logs.log")
 
 labels = [
     "Unknown",
