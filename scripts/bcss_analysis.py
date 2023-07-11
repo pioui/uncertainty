@@ -17,6 +17,9 @@ classifier_name = 'OptRF'
 X, y = dataset.test_dataset  
 y_true = y.reshape(-1)
 
+c = 3
+print(f"Emprical density distribution functions for {dataset_name} tested on {classifier_name} and class {c}, if you want another class change previous line")
+
 # Load predicted probabilities from the classifier
 predicted_probs = np.load(f'{classifications_dir}{dataset_name}_{classifier_name}.npy')
 uncertainties_dir = f'{uncertainties_dir}{dataset_name}_{classifier_name}/'
@@ -33,7 +36,6 @@ y_pred = np.argmax(predicted_probs, axis=1)+1
 
 # Extract indices of correct and wrong predictions
 # Class index of the class of interest
-c = 3
 misclassified_indices = np.where(y_pred!=y_true)[y_true==c]
 wellclassified_indices = np.where(y_pred==y_true)[y_true==c]
 
