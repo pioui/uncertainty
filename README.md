@@ -2,6 +2,9 @@
 Geometry-based and homophily-based measures to assess the uncertainty of a pre-trained classifier.
 
 ## Repository Structure
+
+The ```uncertainty/```  folder contains three subfolders: ```uncertainty/uncertainty/```, ```uncertainty/scripts/```, and ```uncertainty/outputs/```. The ```uncertainty/uncertainty/``` folder includes core functionality to calculate different measures of uncertainty for a defined dataset. The ```uncertainty/scripts/``` folder contains scripts used to calculate uncertainty on different datasets and perform analysis. Finally, the ```uncertainty/outputs/``` folder includes all classification classification outputs, uncertainty measurements, images and figures.
+
 ```
 uncertainty
 │   
@@ -13,7 +16,7 @@ uncertainty
 │   
 └───outputs
 ```
-The ```uncertainty/```  folder contains three subfolders: ```uncertainty/uncertainty/```, ```uncertainty/scripts/```, and ```uncertainty/outputs/```. The ```uncertainty/uncertainty/``` folder includes core functionality to calculate different measures of uncertainty for a defined dataset. The ```uncertainty/scripts/``` folder contains scripts used to calculate uncertainty on different datasets and perform analysis. Finally, the ```uncertainty/outputs/``` folder includes all classification classification outputs, uncertainty measurements, images and figures.
+
 
 ## Set up
 
