@@ -116,7 +116,6 @@ uncertainty
 ### Analysis 
 To run analysis for Trento, signal modulation, and BCSS, execute the following commands:
 ```
-python3 scripts trento_analysis.py
 python3 scripts signalModulation_analysis.py
 python3 scripts bcss_analysis.py
 ```
