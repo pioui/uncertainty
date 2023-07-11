@@ -30,7 +30,11 @@ def GU(p, d = "euclidean", n = 1):
         p = p[None,:]
     elif p.ndim>2:
         raise ValueError(f"p must have two dimensions but {p.ndim} dimensions were found")
-        
+
+
+    # The probabilities should sum up to 1
+    p = p/np.sum(p, axis = 1, keepdims = True)
+
     # Get number of classes
     C = p.shape[-1]
     
@@ -65,9 +69,11 @@ def HU(p, H):
     
     if np.any(H < 0):
         raise ValueError(f"The elements of the matrix H should be positive")
+    
+    print(p.shape)
 
     # The probabilities should sum up to 1
-    p = p/np.sum(p, axis = 1)
+    p = p/np.sum(p, axis = 1, keepdims = True)
 
     # Scale the values of H and get the squared values
     H = H/np.amax(H)
@@ -98,5 +104,8 @@ def variance(p):
     @return : np.array(N) the variance of the N-dimentional categorical distribution
     """
     
+    # The probabilities should sum up to 1
+    p = p/np.sum(p, axis = 1, keepdims = True)
+
     p_max = np.amax(p, axis=1)
     return p_max*(1-p_max)*4
