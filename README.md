@@ -1,6 +1,20 @@
 # On Measures Of Uncertainty In Classification
 Geometry-based and homophily-based measures to assess the uncertainty of a pre-trained classifier.
 
+## Repository Structure
+```
+uncertainty
+│   
+└───uncertainty
+│    │   
+│    └───datasets
+|
+└───scripts
+│   
+└───outputs
+```
+The ```uncertainty/```  folder contains three subfolders: ```uncertainty/uncertainty/```, ```uncertainty/scripts/```, and ```uncertainty/outputs/```. The ```uncertainty/uncertainty/``` folder includes core functionality to calculate different measures of uncertainty for a defined dataset. The ```uncertainty/scripts/``` folder contains scripts used to calculate uncertainty on different datasets and perform analysis. Finally, the ```uncertainty/outputs/``` folder includes all classification classification outputs, uncertainty measurements, images and figures.
+
 ## Set up
 
 ### Envirioment
@@ -26,12 +40,13 @@ pip install -e .
 ```
 ## Data preparation 
 
-To run this code, you'll need the following datasets:
+This repository is made to run on the following datasets:
 
-1. <ins> Trento dataset </ins>: [Download here](link-to-trento-dataset)
+1. <ins> Trento dataset </ins>
 2. <ins> Modulation classification dataset </ins>: The data produced from [this script](https://www.mathworks.com/help/deeplearning/ug/modulation-classification-with-deep-learning.html) with noise levels set to 15dB and 50dB.
 3. <ins> BCSS dataset </ins>: Download the image TCGA-D8-A1JG-DX1_xmin15677_ymin69205_MPP-0.2500 and the corresponding mask from the [BCSS repository](https://github.com/PathologyDataScience/BCSS).
 
+The repository is designed to run on these specific datasets. However, it is possible to adapt the code to work with other datasets. To do so, you can create a new dataset loading file under ```uncertainty/uncertainty/datasets```, create a configuration file under ```uncertainty/scripts/```, and import it in ```uncertainty/scripts/calculate_uncertainties.py```. This will allow you to use the code with the new dataset.
 
 ## Classification Outputs:
 
@@ -51,7 +66,7 @@ uncertainty
     │   signalModulation_config.py
 
 ```
-### Structure
+### Classification structure
 Save the classification probability .npy files for which you want to calculate uncertainties in the following structure:
 ```
 uncertainty
@@ -76,7 +91,7 @@ To calculate and save uncertainties for all the ```outputs/<dataset-name>/classi
 python3 scripts/calculate_uncertainties.py
 ```
 
-### Output structure
+### Calculated uncertainties structure
 The uncertainties should be saved in the following structure:
 ```
 uncertainty

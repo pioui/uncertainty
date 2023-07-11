@@ -23,7 +23,7 @@ for dataset_name_ in os.listdir("outputs/"):
         from signalModulation_config import *
         print(f"Uncertainties will be calculated only for {dataset_name}, if you want another SNR for this dataset please change the configuration file")
     else:
-        print(f'You need to implement the dataset and configuration for {dataset_name}')
+        print(f'You need to implement the dataset and configuration for {dataset_name} and import it here')
         continue
     
     X, y = dataset.test_dataset
