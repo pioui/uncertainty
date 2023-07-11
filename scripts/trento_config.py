@@ -14,7 +14,7 @@ outputs_dir = f"outputs/{dataset_name}/"
 images_dir = f"{outputs_dir}images/"
 classifications_dir = f"{outputs_dir}classifications/"
 uncertainties_dir = f"{outputs_dir}uncertainties/"
-H_matrix_file = f"{outputs_dir}{dataset_name}_omegaH.npy"
+H_matrix_file = f"{outputs_dir}{dataset_name}_H.npy"
 
 # data_dir = "/work/saloua/Datasets/Trento/"
 data_dir = "/home/pigi/data/trento/"

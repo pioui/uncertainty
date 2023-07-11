@@ -9,7 +9,7 @@ import os
 import numpy as np
 
 from uncertainty.H_matrix import calculate_H_matrix
-from uncertainty.uncertainty_measurements import GU, HU
+from uncertainty.uncertainty_measurements import GU, HU, variance
 
 
 for dataset_name_ in os.listdir("outputs/"):
