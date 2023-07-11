@@ -2,12 +2,31 @@ import logging
 import numpy as np
 
 from uncertainty.maximum_hu_utils import get_max_hu
+from scipy.optimize import minimize, Bounds
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-DO_OVERALL = True
 
+def get_max_hu(H):
+    '''
+    Calculate the maximum values of homophily-based uncertainty HU given the matrix H
+
+    @param H : np.array(C,C) classes' pairwise distance matrix
+    @return : the maximum value of HU
+    '''
+    def rosen(x):
+        return -np.transpose(x)@np.power(H,2)@x/2 #
+        
+    eq_cons = {'type': 'eq',
+             'fun' : lambda x: np.sum(x) - 1}
+    x0 = np.ones(H.shape[0])/H.shape[0]
+    bounds = Bounds(np.zeros(H.shape[0]),np.ones(H.shape[0]))
+    res = minimize(rosen, x0, method='SLSQP',
+               constraints=eq_cons, options={'ftol': 1e-9, 'disp': False},
+               bounds=bounds)
+    return -res.fun
+    
 def GU(p, d = "euclidean", n = 1):
     """
     Geometry-based classification uncertainty measure
@@ -54,7 +73,7 @@ def HU(p, H):
 
     @param p : np.array(N,C) N pixels x C probabilities each for each class
     @param H : np.array(C,C) classes' pairwise distance matrix
-    @return : np.array(N) the modified variance of the C-dimentional categorical distribution
+    @return : np.array(N) the homophily-based classification uncertainty of the C-dimentional categorical distribution
     """
 
     p = np.asarray(p)

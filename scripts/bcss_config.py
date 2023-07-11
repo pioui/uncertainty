@@ -16,8 +16,8 @@ classifications_dir = f"{outputs_dir}classifications/"
 uncertainties_dir = f"{outputs_dir}uncertainties/"
 H_matrix_file = f"{outputs_dir}{dataset_name}_H.npy"
 
-# data_dir = "/work/saloua/Datasets/Trento/"
-data_dir = "/home/pigi/data/trento/"
+# data_dir = "/work/saloua/Datasets/bcss/"
+data_dir = "/home/pigi/data/bcss/"
 
 if not os.path.exists(outputs_dir):
     os.makedirs(outputs_dir)
