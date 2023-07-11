@@ -31,9 +31,6 @@ def GU(p, d = "euclidean", n = 1):
     elif p.ndim>2:
         raise ValueError(f"p must have two dimensions but {p.ndim} dimensions were found")
         
-    # The probabilities should sum up to 1
-    p = p/np.sum(p, axis = 1)
-
     # Get number of classes
     C = p.shape[-1]
     

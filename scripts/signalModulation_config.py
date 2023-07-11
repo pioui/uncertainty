@@ -63,7 +63,7 @@ preds_file_here = f"{classifications_dir}/{dataset_name}_{classifier_name}.npy"
 preds_file = os.path.join(f"{data_predir}MCNet_SNR_{modelSNR}/", f"MCNet_SNR_{modelSNR}_MCNet_SNR_{dataSNR}_cal_preds_sum1.npy")
 
 if not os.path.exists(preds_file):
-    print(f"Pridiction file {preds_file} does not exist.")
+    print(f"Prediction file {preds_file} does not exist.")
 
 if not os.path.exists(preds_file_here):
     rxTestcalScores = np.load(preds_file)

@@ -31,7 +31,7 @@ for dataset_name_ in os.listdir("outputs/"):
 
     if not os.path.exists(H_matrix_file):
         print(f"Calculating H matrix ...")
-        H = calculate_H_matrix(X[y_true!=0,:], y[y_true!=0], "energy", len(np.unique(y_true)))#[1:, 1:]
+        H = calculate_H_matrix(X[y_true!=0,:], y[y_true!=0], len(np.unique(y_true)))#[1:, 1:]
         np.save(H_matrix_file, H)
     else:
         H = np.load(H_matrix_file)
@@ -58,19 +58,19 @@ for dataset_name_ in os.listdir("outputs/"):
         if not os.path.exists(uncertainties_folder_dir):
             os.makedirs(uncertainties_folder_dir)
         
-        GU = GU(y_pred_prob, d = "euclidean", n = 2)
-        np.save(f"{uncertainties_folder_dir}/{model_name}_GBU.npy", GU)
+        y_GU = GU(y_pred_prob, d = "euclidean", n = 2)
+        np.save(f"{uncertainties_folder_dir}/{model_name}_GBU.npy", y_GU)
 
-        H = GU(y_pred_prob, d = "kullbackleibler", n = 1)
-        np.save(f"{uncertainties_folder_dir}/{model_name}_ENTROPY.npy", H)
+        y_H = GU(y_pred_prob, d = "kullbackleibler", n = 1)
+        np.save(f"{uncertainties_folder_dir}/{model_name}_ENTROPY.npy", y_H)
 
-        VAR = variance(y_pred_prob)
-        np.save(f"{uncertainties_folder_dir}/{model_name}_VARIANCE.npy", VAR)
+        y_VAR = variance(y_pred_prob)
+        np.save(f"{uncertainties_folder_dir}/{model_name}_VARIANCE.npy", y_VAR)
         
-        GU_fr = GU(y_pred_prob, d = "fisherrao", n = 2)
-        np.save(f"{uncertainties_folder_dir}/{model_name}_GBU_FR.npy", GU_fr)
+        y_GU_fr = GU(y_pred_prob, d = "fisherrao", n = 2)
+        np.save(f"{uncertainties_folder_dir}/{model_name}_GBU_FR.npy", y_GU_fr)
         
-        SU = HU(y_pred_prob, H)
-        np.save(f"{uncertainties_folder_dir}/{model_name}_SBU_energy.npy", SU)
+        y_SU = HU(y_pred_prob, H)
+        np.save(f"{uncertainties_folder_dir}/{model_name}_SBU_energy.npy", y_SU)
         
     print("-------------------------------------------------------------------")
