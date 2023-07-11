@@ -1,83 +1,105 @@
-import os
 import logging
 import numpy as np
-import random
 
-from uncertainty.maximum_variance_utils import get_var_max_from_matrix, get_var_opt
-
-random.seed(42)
+from uncertainty.maximum_hu_utils import get_max_hu
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-np.random.seed(42)
-
 DO_OVERALL = True
 
-def FR_based_uncertainty(p):
+def GU(p, d = "euclidean", n = 1):
     """
-    @param p : np.array(N,C) N pixels x C probability for each class
+    Geometry-based classification uncertainty measure
+
+    @param p : np.array(N,C) N data points x C probabilities each for each class
+    @param d : distance considered on the standard (C-1)-simplex, 
+        The distance function can be "euclidean", "kullbackleibler", "fisherrao" default "euclidean"
+    @param n : positive integer, default 1
     @return : uncertainty claculated with respect of the distance from center of the standard (C-1)-simplex
     """
+
+    if not isinstance(n, int) or n<=0:
+        raise ValueError('n should be a nonegative integer')
+    elif not isinstance(d, str):
+        raise ValueError("d must be a string identifier")
+
+    p = np.asarray(p)
+
+    if p.ndim==1:
+        p = p[None,:]
+    elif p.ndim>2:
+        raise ValueError(f"p must have two dimensions but {p.ndim} dimensions were found")
+        
+    # The probabilities should sum up to 1
+    p = p/np.sum(p, axis = 1)
+
+    # Get number of classes
     C = p.shape[-1]
-    return 1 - np.arccos(np.sum(np.sqrt(p/ C), axis=1))** 2 / np.arccos(np.sqrt(1/ C))** 2
+    
+    if d == "euclidean":
+        return 1 - np.sqrt(np.sum((p - 1 / C) ** 2, axis=1) / (1 - 1 / C))**n
+    elif d == "fisherrao":
+        return 1 - np.arccos(np.sum(np.sqrt(p/ C), axis=1))** n / np.arccos(np.sqrt(1/ C))** n
+    elif d == "kullbackleibler":
+        p = p + 1e-10
+        return 1 - (np.sum(p * np.log(C*p), axis=1) / np.log(C))**n
+    else: raise ValueError(f'Unknown Distance Metric: {d}')
 
 
-def geometry_based_uncertainty(p):
+def HU(p, H):
     """
-    @param p : np.array(N,C) N pixels x C probability for each class
-    @return : uncertainty claculated with respect of the distance from center of the standard (C-1)-simplex
-    """
-    C = p.shape[-1]
-    return 1 - np.sum((p - 1 / C) ** 2, axis=1) / (1 - 1 / C)
+    Homophily-based classification uncertainty measure
 
+    @param p : np.array(N,C) N pixels x C probabilities each for each class
+    @param H : np.array(C,C) classes' pairwise distance matrix
+    @return : np.array(N) the modified variance of the C-dimentional categorical distribution
+    """
+
+    p = np.asarray(p)
+
+    if p.ndim==1:
+        p = p[None,:]
+    elif p.ndim>2:
+        raise ValueError(f"p must have two dimensions but {p.ndim} dimensions were found")
+        
+    if H.ndim!=2:
+        raise ValueError(f"The matrix H must have two dimensions but {p.ndim} dimensions were found")
+    
+    if np.any(H < 0):
+        raise ValueError(f"The elements of the matrix H should be positive")
+
+    # The probabilities should sum up to 1
+    p = p/np.sum(p, axis = 1)
+
+    # Scale the values of H and get the squared values
+    H = H/np.amax(H)
+    H2 = np.power(H, 2)
+
+    # get the maximum value of HU
+    maxHU = get_max_hu(H)
+    HU = np.zeros(len(p))
+    # Get number of data points
+    N = len(p)
+
+    step = 1000
+
+    if N<=step:
+        HU = np.diag(np.matmul(np.matmul(p, H2),np.transpose(p)))
+    else: 
+        for i in range(0,len(p),step):
+            if i+step>len(p):
+                HU[i:] = np.diag(np.matmul(np.matmul(p[i:,:], H2),np.transpose(p[i:,:])))
+            else:
+                HU[i:i+step-1] = np.diag(np.matmul(np.matmul(p[i:i+step-1,:], H2),np.transpose(p[i:i+step-1,:])))
+        
+    return HU/(2*maxHU)
 
 def variance(p):
     """
     @param p : np.array(N,C) N pixels x C probability for each class
     @return : np.array(N) the variance of the N-dimentional categorical distribution
     """
+    
     p_max = np.amax(p, axis=1)
-    return p_max*(1-p_max)*4#4 * var / (C - 1) ** 2
-
-
-def semantic_based_uncertainty(p, C):
-    """
-    @param p : np.array(N,C) N pixels x C probability for each class
-    @param C : np.array(C,C) compatibility / compatibilityy matrix
-    @return : np.array(N) the modified variance of the C-dimentional categorical distribution
-    """
-
-    C = C/np.amax(C)
-    maxVar = get_var_opt(C)
-    Var = np.zeros(len(p))
-    step = 1000
-    C2 = np.power(C, 2)
-    for i in range(0,len(p),step):
-        if i+step>len(p):
-            Var[i:] = np.diag(np.matmul(np.matmul(p[i:,:], C2),np.transpose(p[i:,:])))
-        else:
-            Var[i:i+step-1] = np.diag(np.matmul(np.matmul(p[i:i+step-1,:], C2),np.transpose(p[i:i+step-1,:])))
-        
-
-    return Var/(2*maxVar)
-
-def semantic_based_uncertainty_old(p, C):
-    """
-    @param p : np.array(N,C) N pixels x C probability for each class
-    @param w : np.array(C,C) compatibility / compatibilityy matrix
-    @return : np.array(N) the modified variance of the C-dimentional categorical distribution
-    """
-    s_ij = C[p.argmax(1)]
-    return np.sum(**2 * p, axis=1) - np.sum(s_ij * p, axis=1) ** 2
-
-
-def shannon_entropy(p):
-    """
-    @param p : np.array(N,C) N pixels x C probability for each class
-    @return : np.array(N) the entropy of the N-dimentional categorical distribution
-    """
-    p = p + 1e-10
-    N = p.shape[-1]
-
-    return -np.sum(p * np.log(p), axis=1) / np.log(N)
+    return p_max*(1-p_max)*4

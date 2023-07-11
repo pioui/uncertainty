@@ -6,17 +6,10 @@ Usage:
 
 """
 import os
-from sklearn.metrics import accuracy_score
 import numpy as np
 
-from uncertainty.compatibility_matrix import calculate_compatibility_matrix
-from uncertainty.uncertainty_measurements import (
-    geometry_based_uncertainty,
-    variance,
-    shannon_entropy,
-    semantic_based_uncertainty,
-    FR_based_uncertainty,
-)
+from uncertainty.H_matrix import calculate_H_matrix
+from uncertainty.uncertainty_measurements import GU, HU
 
 
 for dataset_name_ in os.listdir("outputs/"):
@@ -36,21 +29,20 @@ for dataset_name_ in os.listdir("outputs/"):
     X, y = dataset.test_dataset
     y_true = y.reshape(-1)
 
-    if not os.path.exists(compatibility_matrix_file):
-        print(f"Calculating compatibility matrix ...")
-        compatibility_matrix = calculate_compatibility_matrix(X[y_true!=0,:], y[y_true!=0], "energy", len(np.unique(y_true)))#[1:, 1:]
-        np.save(compatibility_matrix_file, compatibility_matrix)
+    if not os.path.exists(H_matrix_file):
+        print(f"Calculating H matrix ...")
+        H = calculate_H_matrix(X[y_true!=0,:], y[y_true!=0], "energy", len(np.unique(y_true)))#[1:, 1:]
+        np.save(H_matrix_file, H)
     else:
-        compatibility_matrix= np.load(compatibility_matrix_file)
+        H = np.load(H_matrix_file)
 
     # Normalized:
-    # maxco = np.max(compatibility_matrix)
-    # minco = np.min(compatibility_matrix)
-    # compatibility_matrix= (compatibility_matrix-minco)/(maxco-minco)
+    # maxco = np.max(H)
+    # H= H/maxco
 
     print(f'Dataset: {dataset_name}')
     print(f" Ω_H = ")
-    print(compatibility_matrix)
+    print(H)
 
     print(f"Calculating uncertainties for {dataset_name} predictions...")
 
@@ -66,19 +58,19 @@ for dataset_name_ in os.listdir("outputs/"):
         if not os.path.exists(uncertainties_folder_dir):
             os.makedirs(uncertainties_folder_dir)
         
-        GU = geometry_based_uncertainty(y_pred_prob)
+        GU = GU(y_pred_prob, d = "euclidean", n = 2)
         np.save(f"{uncertainties_folder_dir}/{model_name}_GBU.npy", GU)
 
-        H = shannon_entropy(y_pred_prob)
+        H = GU(y_pred_prob, d = "kullbackleibler", n = 1)
         np.save(f"{uncertainties_folder_dir}/{model_name}_ENTROPY.npy", H)
 
         VAR = variance(y_pred_prob)
         np.save(f"{uncertainties_folder_dir}/{model_name}_VARIANCE.npy", VAR)
         
-        GU_fr = FR_based_uncertainty(y_pred_prob)
+        GU_fr = GU(y_pred_prob, d = "fisherrao", n = 2)
         np.save(f"{uncertainties_folder_dir}/{model_name}_GBU_FR.npy", GU_fr)
         
-        SU = semantic_based_uncertainty(y_pred_prob, compatibility_matrix)
+        SU = HU(y_pred_prob, H)
         np.save(f"{uncertainties_folder_dir}/{model_name}_SBU_energy.npy", SU)
         
     print("-------------------------------------------------------------------")

@@ -10,10 +10,10 @@ import matplotlib.pyplot as plt
 import os
 import numpy as np
 from matplotlib import colors
-from uncertainty.compatibility_matrix import calculate_compatibility_matrix
+from uncertainty.H_matrix import calculate_H_matrix
 import matplotlib.patches as mpatches
 
-from uncertainty.compatibility_matrix import calculate_compatibility_matrix
+from uncertainty.H_matrix import calculate_H_matrix
 from uncertainty.uncertainty_measurements import (
     geometry_based_uncertainty,
     variance,
@@ -136,7 +136,7 @@ for file in os.listdir(classifications_dir):
 
     # plt.figure(dpi=500)
     # plt.imshow(
-    #     semantic_based_uncertainty(y_pred_prob, compatibility_matrix).reshape(
+    #     semantic_based_uncertainty(y_pred_prob, H_matrix).reshape(
     #         dataset.shape
     #     ),
     #     cmap="turbo",
@@ -155,7 +155,7 @@ for file in os.listdir(classifications_dir):
 
     # plt.figure(dpi=500)
     # plt.imshow(
-    #     semantic_based_uncertainty(y_pred_prob, compatibility_matrix1).reshape(
+    #     semantic_based_uncertainty(y_pred_prob, H_matrix1).reshape(
     #         dataset.shape
     #     ),
     #     cmap="turbo",
@@ -173,8 +173,8 @@ for file in os.listdir(classifications_dir):
     # )
 
 
-    #compatibility_matrix = calculate_compatibility_matrix(X, y, "JS")[1:, 1:]
-    #compatibility_matrix = compatibility_matrix[1:, 1:]
+    #H_matrix = calculate_H_matrix(X, y, "JS")[1:, 1:]
+    #H_matrix = H_matrix[1:, 1:]
     GU_fr = FR_based_uncertainty(y_pred_prob).reshape(dataset.shape)
     plt.figure(dpi=500)
     plt.imshow(
@@ -194,11 +194,11 @@ for file in os.listdir(classifications_dir):
     )
 
 
-    # compatibility_matrix = calculate_compatibility_matrix(X, y, "KL")[1:, 1:]
-    # #compatibility_matrix = compatibility_matrix[1:, 1:]
+    # H_matrix = calculate_H_matrix(X, y, "KL")[1:, 1:]
+    # #H_matrix = H_matrix[1:, 1:]
     # plt.figure(dpi=500)
     # plt.imshow(
-    #     semantic_based_uncertainty(y_pred_prob, compatibility_matrix).reshape(
+    #     semantic_based_uncertainty(y_pred_prob, H_matrix).reshape(
     #         dataset.shape
     #     ),
     #     cmap="turbo",
@@ -216,11 +216,11 @@ for file in os.listdir(classifications_dir):
     # )
 
     print(X.shape)
-    compatibility_matrix = calculate_compatibility_matrix(X[y_true!=0,:], y[y_true!=0], "energy", len(np.unique(y_pred)))#[1:, 1:]
-    SU = semantic_based_uncertainty(y_pred_prob, compatibility_matrix).reshape(
+    H_matrix = calculate_H_matrix(X[y_true!=0,:], y[y_true!=0], "energy", len(np.unique(y_pred)))#[1:, 1:]
+    SU = semantic_based_uncertainty(y_pred_prob, H_matrix).reshape(
             dataset.shape
         )
-    #compatibility_matrix = compatibility_matrix[1:, 1:]
+    #H_matrix = H_matrix[1:, 1:]
     plt.figure(dpi=500)
     su_plt = plt.imshow(
         SU,
