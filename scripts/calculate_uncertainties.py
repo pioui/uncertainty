@@ -41,7 +41,7 @@ for dataset_name_ in os.listdir("outputs/"):
     # H= H/maxco
 
     print(f'Dataset: {dataset_name}')
-    print(f" Ω_H = ")
+    print(f" H = ")
     print(H)
 
     print(f"Calculating uncertainties for {dataset_name} predictions...")
