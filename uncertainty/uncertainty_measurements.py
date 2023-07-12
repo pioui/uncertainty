@@ -1,7 +1,6 @@
 import logging
 import numpy as np
 
-from uncertainty.maximum_hu_utils import get_max_hu
 from scipy.optimize import minimize, Bounds
 
 logger = logging.getLogger(__name__)
