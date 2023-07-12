@@ -43,13 +43,12 @@ class bcss_dataset:
         if do_preprocess:
             x_all = normalize(x_all)
 
-        x_all = x.reshape(6941, 5342, -1)  # [6941, 5342, 3]
-
+        # x_all = x.reshape(6941, 5342, -1)  # [6941, 5342, 3]
 
         self.n_classes = len(np.unique(y_all))
 
         x_train, x_test, y_train, y_test = train_test_split(
-            x_all[y_all!=0,:,:,:],
+            x_all[y_all!=0,:],
             y_all[y_all!=0],
             train_size=train_size,
             random_state=42,

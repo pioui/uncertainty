@@ -26,7 +26,7 @@ if not os.path.exists(images_dir):
     os.makedirs(images_dir)
 
 samples_per_class = 100
-dataset = bcss_dataset(data_dir=data_dir, samples_per_class=samples_per_class)
+dataset = bcss_dataset(data_dir=data_dir)
 
 logging.basicConfig(filename=f"{outputs_dir}{dataset_name}_logs.log")
 

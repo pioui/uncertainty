@@ -57,6 +57,8 @@ for dataset_name_ in os.listdir("outputs/"):
         uncertainties_folder_dir = os.path.join(uncertainties_dir,model_name)
         if not os.path.exists(uncertainties_folder_dir):
             os.makedirs(uncertainties_folder_dir)
+
+        print('Classification shape:', y_pred_prob.shape)
         
         y_GU = GU(y_pred_prob, d = "euclidean", n = 2)
         np.save(f"{uncertainties_folder_dir}/{model_name}_GBU.npy", y_GU)

@@ -13,7 +13,7 @@ from sklearn.metrics import accuracy_score
 import pandas as pd
 from bcss_config import *
 
-classifier_name = 'OptRF'
+classifier_name = 'RF_OPT'
 X, y = dataset.test_dataset  
 y_true = y.reshape(-1)
 
@@ -33,18 +33,22 @@ uncertainties_names_wrong = []
 uncertainties_names_right = []
 
 y_pred = np.argmax(predicted_probs, axis=1)+1
+print('Predictions shape: ', y_pred.shape)
+print('True shape: ', y_true.shape)
 
 # Extract indices of correct and wrong predictions
 # Class index of the class of interest
-misclassified_indices = np.where(y_pred!=y_true)[y_true==c]
-wellclassified_indices = np.where(y_pred==y_true)[y_true==c]
+misclassified_indices = np.where((y_pred!=y_true) & (y_true==c))
+wellclassified_indices = np.where((y_pred==y_true) & (y_true==c))
 
 total_misclassified = len(misclassified_indices)
 total_wellclassified = len(wellclassified_indices)
 
+print(misclassified_indices[:10])
 
 for file in os.listdir(uncertainties_dir):
     uncertainty = np.load(os.path.join(uncertainties_dir,file))
+    print(uncertainties_dir, 'shape:', uncertainty.shape)
     uncertainties.append(uncertainty)
     uncertainties_right = np.concatenate((uncertainties_right, uncertainty[wellclassified_indices]))
     uncertainties_wrong = np.concatenate((uncertainties_wrong, uncertainty[misclassified_indices]))

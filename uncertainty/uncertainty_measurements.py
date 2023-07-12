@@ -89,8 +89,6 @@ def HU(p, H):
     if np.any(H < 0):
         raise ValueError(f"The elements of the matrix H should be positive")
     
-    print(p.shape)
-
     # The probabilities should sum up to 1
     p = p/np.sum(p, axis = 1, keepdims = True)
 
