@@ -12,14 +12,14 @@ from uncertainty.H_matrix import calculate_H_matrix
 from uncertainty.uncertainty_measurements import GU, HU, variance
 
 
-for dataset_name_ in os.listdir("outputs/"):
-    if dataset_name_ == "trento":
+for dataset_name in os.listdir("outputs/"):
+    if dataset_name == "trento":
         from trento_config import *
 
-    elif dataset_name_ == "bcss":
+    elif dataset_name == "bcss":
         from bcss_config import *
 
-    elif "signalModulation" in dataset_name_:
+    elif "signalModulation" in dataset_name:
         from signalModulation_config import *
         print(f"Uncertainties will be calculated only for {dataset_name}, if you want another SNR for this dataset please change the configuration file")
     else:
