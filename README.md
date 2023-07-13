@@ -3,7 +3,7 @@ Geometry-based and homophily-based measures to assess the uncertainty of a pre-t
 
 ## Repository Structure
 
-The ```uncertainty/```  folder contains three subfolders: ```uncertainty/uncertainty/```, ```uncertainty/scripts/```, and ```uncertainty/outputs/```. The ```uncertainty/uncertainty/``` folder includes core functionality to calculate different measures of uncertainty for a defined dataset. The ```uncertainty/scripts/``` folder contains scripts used to calculate uncertainty on different datasets and perform analysis. Finally, the ```uncertainty/outputs/``` folder includes all classification classification outputs, uncertainty measurements, images and figures.
+The ```uncertainty/```  folder contains three subfolders: ```uncertainty/uncertainty/```, ```uncertainty/scripts/```, and ```uncertainty/outputs/```. The ```uncertainty/uncertainty/``` folder includes core functionality to calculate different measures of uncertainty for a defined dataset. The ```uncertainty/scripts/``` folder contains scripts used to calculate uncertainty on different datasets and perform analysis. Finally, the ```uncertainty/outputs/``` folder includes all classification outputs, uncertainty measurements, images and figures.
 
 ```
 uncertainty
@@ -20,7 +20,7 @@ uncertainty
 
 ## Set up
 
-### Envirioment
+### Environment
 
 If you haven't created it already, please create a conda environment using the following command
 ```
@@ -58,7 +58,7 @@ You have two options for obtaining classification outputs:
 1. Download pre-generated outputs: You can download pre-computed classification outputs for the datasets mentioned above from [this Google Drive folder](https://drive.google.com/drive/u/0/folders/1XHM36H289swJfjZJSK0gbZiN9w_JTqfY). Copy ```outputs/``` folder inside ```uncertainty/``` repository. 
 2. Use your own classification outputs: If you have your own classification outputs, ensure they have a similar structure as the pre-generated outputs.
 
-### Configuaration
+### Configuration
 Edit the data directories and output configurations in the respective configuration files for each dataset you want to use:
 ```
 uncertainty
