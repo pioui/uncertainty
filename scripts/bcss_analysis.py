@@ -15,9 +15,9 @@ from bcss_config import *
 
 classifier_name = 'RF_OPT'
 X, y = dataset.test_dataset  
-y_true = y.reshape(-1)
+y_true = y #y.reshape(-1)
 
-c = 3
+c = 4
 print(f"Emprical density distribution functions for {dataset_name} tested on {classifier_name} and class {c}, if you want another class change previous line")
 
 # Load predicted probabilities from the classifier
@@ -28,33 +28,27 @@ uncertainties_dir = f'{uncertainties_dir}{dataset_name}_{classifier_name}/'
 uncertainties_wrong = []
 uncertainties_right = []
 
-uncertainties = []
 uncertainties_names_wrong = []
 uncertainties_names_right = []
 
 y_pred = np.argmax(predicted_probs, axis=1)+1
-print('Predictions shape: ', y_pred.shape)
-print('True shape: ', y_true.shape)
 
 # Extract indices of correct and wrong predictions
 # Class index of the class of interest
-misclassified_indices = np.where((y_pred!=y_true) & (y_true==c))
-wellclassified_indices = np.where((y_pred==y_true) & (y_true==c))
+misclassified_indices = np.where((y_true==c) & (y_pred!=c))[0]
+wellclassified_indices = np.where((y_true==c) & (y_pred==c))[0]
 
 total_misclassified = len(misclassified_indices)
 total_wellclassified = len(wellclassified_indices)
 
-print(misclassified_indices[:10])
 
 for file in os.listdir(uncertainties_dir):
     uncertainty = np.load(os.path.join(uncertainties_dir,file))
-    print(uncertainties_dir, 'shape:', uncertainty.shape)
-    uncertainties.append(uncertainty)
     uncertainties_right = np.concatenate((uncertainties_right, uncertainty[wellclassified_indices]))
     uncertainties_wrong = np.concatenate((uncertainties_wrong, uncertainty[misclassified_indices]))
     
     if 'ENTROPY' in file:
-        meas_name = 'ENTROPY'
+        meas_name = 'Entropy'
 
     elif 'GBU_FR' in file:
         meas_name = r'$GU_{2|FR}$'
@@ -85,9 +79,9 @@ data_wrong = pd.DataFrame(data = {"Uncertainties": uncertainties_wrong, "Measure
 sns.set(font_scale = 1.5, rc={'axes.facecolor':'white'})
 sns.set_theme(style="white")
 
-pp = sns.ecdfplot(data=data_wrong, x="Uncertainties", hue = "Measures", hue_order= ["Var", r'$GU_{2|FR}$', "Entropy", 'Gini-index', r'$HU$']) #"Measures") #, y="Uncertainties") #, hue="Classification", data=data, hue_order= ["Right", "Wrong"])#, cut = 0, scale = 'area', split=True)
+pp = sns.ecdfplot(data=data_wrong, x="Uncertainties", hue = "Measures", hue_order= ['Var', r'$GU_{2|FR}$', 'Entropy', 'Gini-index', r'$HU$']) 
 fig = pp.figure
-for lines, marker, legend_handle in zip(pp.lines[::-1], ['*', 'o', '+', 's', '8'], pp.legend_.legend_handles): #, legend_handle, fig.legend.legendHandles
+for lines, marker, legend_handle in zip(pp.lines[::-1], ['*', 'o', '+', 's', '8'], pp.legend_.legend_handles): 
     lines.set_marker(marker)
     lines.set_markevery(0.1)
     legend_handle.set_marker(marker) 
@@ -108,7 +102,7 @@ data_right = pd.DataFrame(data = {"Uncertainties": uncertainties_right, "Measure
 sns.set(font_scale = 1.5, rc={'axes.facecolor':'white'}) 
 sns.set_theme(style="white")
 
-pp = sns.ecdfplot(data=data_right, x="Uncertainties", hue = "Measures", hue_order= ["Var", r'$GU_{2|FR}$', "Entropy", 'Gini-index', r'$HU$']) 
+pp = sns.ecdfplot(data=data_right, x="Uncertainties", hue = "Measures", hue_order= ['Var', r'$GU_{2|FR}$', 'Entropy', 'Gini-index', r'$HU$']) 
 fig = pp.figure
 for lines, marker, legend_handle in zip(pp.lines[::-1], ['*', 'o', '+', 's', '8'], pp.legend_.legend_handles): 
     lines.set_marker(marker)
