@@ -51,7 +51,7 @@ This repository is made to run on the following datasets:
 
 The repository is designed to run on these specific datasets. However, it is possible to adapt the code to work with other datasets. To do so, you can create a new dataset loading file under ```uncertainty/uncertainty/datasets```, create a configuration file under ```uncertainty/scripts/```, and import it in ```uncertainty/scripts/calculate_uncertainties.py```. This will allow you to use the code with the new dataset.
 
-## Classification Outputs:
+## Classification Outputs
 
 You have two options for obtaining classification outputs:
 
