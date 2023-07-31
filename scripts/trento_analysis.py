@@ -1,299 +1,250 @@
 """
-Script for generating uncertainty maps and analysis plots for Trento dataset
-$ TODO: add all analysis plots and clean the code
+Script for generating uncertainty analysis plots for trento dataset
+
 Usage:
   python3 scripts/trento_analysis.py 
 
 """
 
-import matplotlib.pyplot as plt
-import os
+from sklearn.metrics import accuracy_score
+
+import seaborn as sns
+import pandas as pd
 import numpy as np
-from matplotlib import colors
-from uncertainty.compatibility_matrix import calculate_compatibility_matrix
-import matplotlib.patches as mpatches
-
-from uncertainty.compatibility_matrix import calculate_compatibility_matrix
-from uncertainty.uncertainty_measurements import (
-    geometry_based_uncertainty,
-    variance,
-    shannon_entropy,
-    semantic_based_uncertainty,
-    FR_based_uncertainty,
-)
-
+import os
+import matplotlib.pyplot as plt
 from trento_config import *
-location = "bottom"
-orientation = "horizontal"
-col = 6
+from sklearn.ensemble import IsolationForest
+
+def get_hsi_signature(x, y):
+    '''
+    Return mean and standard deviation of hyperspectral signatures for each class
+    @param x : np.array(N,D) N data points x D channels
+    @param y : np.array(N) true labels of the data points
+    @return : mean and standard deviation of hyperspectral signatures for each class
+    '''
+
+    # Remove lidar's channels
+    x = x[:,:-2]
+    C = np.unique(y)
+    mean_sig = np.zeros((len(C), x.shape[1]))
+    std_sig = np.zeros((len(C), x.shape[1]))
+    for c in C:
+        #Get high density data points to remove outliers
+        new_labels = IsolationForest(contamination = 0.4).fit_predict(x[y==c,:])
+        x_new = x[y==c,:][new_labels==1,:]
+        mean_sig[c-1, :] = np.mean(x_new, axis = 0)
+        std_sig[c-1, :] = np.sqrt(np.var(x_new, axis = 0))
+    return mean_sig, std_sig
+
+def get_confused_classes(p, y_true, c_true, c_pred):
+    '''
+    Return indices of data points of label c_true 
+    misclassified as c_pred and where the correct 
+    class comes as second best estimate
+    @param p : np.array(N,C) N data points x C probabilities each for each class
+    @param y_true : np.array(N) true labels of the data points
+    @c_true: label of the correct class 
+    @c_pred: label of the predicted class
+    @return : indices of data points misclassified as c_pred where the true class c_true comes as second best estimate
+    '''
+    K = np.array(p[y_true==c_true, :])
+    KK = np.argsort(K, axis = 1)
+    KKK = np.argsort(K[KK[:,-2] == c_true-1], axis = 1)
+    return np.arange(len(p))[y_true==c_true][KK[:,-2] == c_true-1][KKK[:,-1] == c_pred-1]
+
+X, y = dataset.full_dataset #train_dataset #  # 15107
+y = y.reshape(-1)
+
+classifier_name = "RF_OPT" # #other options are "SVM_OPT" and "SVM"
+
+# Load predicted probabilities from the classifier
+predicted_probs = np.load(f'{classifications_dir}{dataset_name}_{classifier_name}.npy')[y!=0, :]
+y_true = y[y!=0]
+C = np.unique(y_true)
+
+uncertainties_dir = f'{uncertainties_dir}{dataset_name}_{classifier_name}/'
+
+# Load uncertainty scores
+uncertainties_wrong = []
+uncertainties_right = []
+uncertainties = []
+uncertainties_names_wrong = []
+uncertainties_names_right = []
+uncertainties_names = []
+
+y_pred = np.argmax(predicted_probs, axis=1)+1
+
+# Get number of confused classes
+number_classes_confused = np.sum(predicted_probs>1/len(C), axis = 1)
+
+# Get indices of type of confusion
+c_true = 6 # Correct class
+c_pred1 = 2 # Class predicted
+idx_1 = get_confused_classes(predicted_probs, y_true, c_true, c_pred1) #confusion between classes 6 and 1
+c_pred2 = 4 # Class predicted
+idx_2 = get_confused_classes(predicted_probs, y_true, c_true, c_pred2) #confusion between classes 6 and 3
+c_pred3 = 5 # Class predicted
+idx_3 = get_confused_classes(predicted_probs, y_true, c_true, c_pred3) #confusion between classes 6 and 4
+
+conf_unc = [] 
+conf_meas = [] 
+conf_type = []
+
+
+# Extract indices of correct and wrong predictions
+misclassified_indices = np.where(y_pred!=y_true)[0]
+wellclassified_indices = np.where(y_pred==y_true)[0]
+total_misclassified = len(misclassified_indices)
+total_wellclassified = len(wellclassified_indices)
+
+
+for file in os.listdir(uncertainties_dir):
+    uncertainty = np.load(os.path.join(uncertainties_dir,file))[y!=0]
+    uncertainties = np.concatenate((uncertainties, uncertainty))
+    uncertainties_right = np.concatenate((uncertainties_right, uncertainty[wellclassified_indices]))
+    uncertainties_wrong = np.concatenate((uncertainties_wrong, uncertainty[misclassified_indices]))
+    
+    if 'ENTROPY' in file:
+        meas_name = 'ENTROPY'
+
+    elif 'GBU_FR' in file:
+        meas_name = r'$GU_{2|FR}$'
+
+    elif 'VARIANCE' in file:
+        meas_name = 'Var'
+        
+    elif 'SBU' in file:
+        meas_name = r'$HU$'
+        # Get confused classes
+        conf_unc = np.concatenate((conf_unc, uncertainty[idx_1], uncertainty[idx_2], uncertainty[idx_3]))
+        conf_meas = conf_meas + [meas_name]*len(idx_1) + [meas_name]*len(idx_2) + [meas_name]*len(idx_3)
+        conf_type = conf_type + [labels[c_pred1]]*len(idx_1) + [labels[c_pred2]]*len(idx_2) + [labels[c_pred3]]*len(idx_3)
+
+        
+    elif 'GBU' in file:
+        meas_name = 'Gini-index' 
+        # Get confused classes
+        conf_unc = np.concatenate((conf_unc, uncertainty[idx_1], uncertainty[idx_2], uncertainty[idx_3]))
+        conf_meas = conf_meas + [meas_name]*len(idx_1) + [meas_name]*len(idx_2) + [meas_name]*len(idx_3)
+        conf_type = conf_type + [labels[c_pred1]]*len(idx_1) + [labels[c_pred2]]*len(idx_2) + [labels[c_pred3]]*len(idx_3)
+    
+        
+    # Get correct and wrong predictions
+    uncertainties_names_wrong = uncertainties_names_wrong + [meas_name]*total_misclassified
+    uncertainties_names_right = uncertainties_names_right + [meas_name]*total_wellclassified
+    uncertainties_names = uncertainties_names + [meas_name]*len(uncertainty)
+
+# Print accuracy
+accuracy = accuracy_score(y_true, y_pred)
+print(f"Accuracy: {accuracy}")
+
+# Plot mean and standard deviation of uncertainties as a function of the number of confused classes
 borderaxespad =-2
-columnspacing = 0.5
+columnspacing = 1
 
+data = pd.DataFrame(data = {"Uncertainties": uncertainties_names, "Measures": uncertainties, "Classes": list(number_classes_confused) * 5}) #, "Classification": labels, "classes": classes})
+sns.set(font_scale = 1.5, rc={'axes.facecolor':'white'}) #, 'figure.facecolor':'white'
+sns.set_theme(style="white")
 
-X, y = dataset.full_dataset  
-y_true = y.reshape(-1)
+pp = sns.pointplot(data=data, x="Classes", y="Measures", hue="Uncertainties", errorbar="sd", dodge=True, hue_order= ["Var", r"$GU_{2|FR}$", "entropy", "Gini-index", r"$SU_\mathcal{H}$"])
+fig = pp.figure
+sns.move_legend(pp, loc=9, ncol = 5, title = "",fontsize='medium', borderaxespad=borderaxespad, columnspacing = columnspacing) #, mode = "expand"
+plt.xlabel("Number of confused classes")
+plt.ylabel("Uncertainty")
+fig.savefig(f"{images_dir}{dataset_name}_{classifier_name}_number_classes.png",
+    bbox_inches="tight",
+    pad_inches=0,
+    dpi=500,)
+plt.close()
 
-for file in os.listdir(classifications_dir):
-    if os.path.splitext(file)[-1].lower() == ".npy":
-        y_pred_prob = np.load(os.path.join(classifications_dir, file))
-    else:
-        continue
-    
-    model_name = os.path.splitext(file)[0]
-            
-    y_pred = y_pred_prob.argmax(1) + 1
-    print(y_pred_prob.shape[1])
+# Plot mean and standard deviation of homophily uncertainty as a function of the type of confused classes
 
-    if y_pred_prob.shape[1] == 7:
-        y_pred_prob = y_pred_prob[:,:-1]/np.transpose(np.tile(np.sum(y_pred_prob, axis =1), (6,1)))
+data = pd.DataFrame(data = {"Uncertainties": conf_meas, "Measures": conf_unc, "Classes": conf_type}) #, "Classification": labels, "classes": classes})
+sns.set(font_scale = 1.5, rc={'axes.facecolor':'white'}) #, 'figure.facecolor':'white'
+sns.set_theme(style="white")
 
-    values = np.unique(y_pred.ravel())
-    patches = [mpatches.Patch(color=color[i+1], label=labels[i+1].format(l=values[i]) ) for i in range(len(values)) ]
-    plt.figure(dpi=500)
-    plt.imshow(
-        y_pred.reshape(dataset.shape),
-        interpolation="nearest",
-        cmap=colors.ListedColormap(color[1:]),
-    )
-    plt.axis("off")
-    plt.legend(handles=patches, loc=8, ncol = col, fontsize='small', borderaxespad=borderaxespad, columnspacing = columnspacing) #, mode = "expand"
-    plt.savefig(
-        f"{images_dir}{model_name}_PREDICTIONS.eps",
-        bbox_inches="tight",
-        pad_inches=0,
-        dpi=500,
-    )
+pp = sns.pointplot(data=data, x="Classes", y="Measures", hue="Uncertainties", errorbar="sd", dodge=True)
+fig = pp.figure
+pp.set(ylim=(-0.2, 1.1))
+sns.move_legend(pp, loc="best", ncol = 2, title = "",fontsize='medium')#, borderaxespad=borderaxespad, columnspacing = columnspacing) #, mode = "expand"
+plt.xlabel("")
+plt.ylabel("Uncertainty")
+fig.savefig(f"{images_dir}{dataset_name}_{classifier_name}_confused_classes.png",
+    bbox_inches="tight",
+    pad_inches=0,
+    dpi=500,)
+plt.close()
 
-    y_true[0] = 0
-    plt.figure(dpi=500)
-    plt.imshow(
-        y_true.reshape(dataset.shape),
-        interpolation="nearest",
-        cmap=colors.ListedColormap(color),
-    )
-    plt.axis("off")
-    plt.savefig(
-        f"{images_dir}{model_name}_GT.eps",
-        bbox_inches="tight",
-        pad_inches=0,
-        dpi=500,
-    )
-    
-    GU = geometry_based_uncertainty(y_pred_prob).reshape(dataset.shape)
+# Plot ECDF corresponding to the wrong predictions
 
-    plt.figure(dpi=500)
-    plt.imshow(
-        GU,
-        cmap="turbo",
-        vmin=0,
-        vmax=1,
-    )
-    plt.axis("off")
-    cbar = plt.colorbar(location = location, orientation = orientation, pad = 0.01)
-    cbar.ax.tick_params(labelsize=12)
-    plt.savefig(
-        f"{images_dir}{model_name}_GBU.eps",
-        bbox_inches="tight",
-        pad_inches=0,
-        dpi=500,
-    )
+data_wrong = pd.DataFrame(data = {"Uncertainties": uncertainties_wrong, "Measures": uncertainties_names_wrong})
 
-    plt.figure(dpi=500)
-    plt.imshow(
-        variance(y_pred_prob).reshape(dataset.shape),
-        cmap="turbo",
-        vmin=0,
-        vmax=1,
-    )
-    plt.axis("off")
-    cbar = plt.colorbar(location = location, orientation = orientation, pad = 0.01)
-    cbar.ax.tick_params(labelsize=12)
-    plt.savefig(
-        f"{images_dir}{model_name}_VARIANCE.eps",
-        bbox_inches="tight",
-        pad_inches=0,
-        dpi=500,
-    )
+sns.set(font_scale = 1.5, rc={'axes.facecolor':'white'})
+sns.set_theme(style="white")
 
-    H = shannon_entropy(y_pred_prob).reshape(dataset.shape)
-    plt.figure(dpi=500)
-    plt.imshow(
-        H,
-        cmap="turbo",
-        vmin=0,
-        vmax=1,
-    )
+pp = sns.ecdfplot(data=data_wrong, x="Uncertainties", hue = "Measures", hue_order= ["Var", r'$GU_{2|FR}$', "Entropy", 'Gini-index', r'$HU$']) #"Measures") #, y="Uncertainties") #, hue="Classification", data=data, hue_order= ["Right", "Wrong"])#, cut = 0, scale = 'area', split=True)
+fig = pp.figure
+for lines, marker, legend_handle in zip(pp.lines[::-1], ['*', 'o', '+', 's', '8'], pp.legend_.legend_handles): #, legend_handle, fig.legend.legendHandles
+    lines.set_marker(marker)
+    lines.set_markevery(0.1)
+    legend_handle.set_marker(marker) 
+plt.xlim((0,1))
+plt.xlabel('Uncertainty')
+sns.move_legend(pp, loc=9, ncol = 5, title = "",fontsize='medium', borderaxespad=borderaxespad, columnspacing = columnspacing)
+plt.savefig(
+    f"{images_dir}{dataset_name}_{classifier_name}_misclassified-ecdf_class.png",
+    bbox_inches="tight",
+    pad_inches=0,
+    dpi=500,
+)
+plt.close()
 
-    plt.axis("off")
-    cbar = plt.colorbar(location = location, orientation = orientation, pad = 0.01)#location="top"
-    cbar.ax.tick_params(labelsize=12)
-    plt.savefig(
-        f"{images_dir}{model_name}_ENTROPY.eps",
-        bbox_inches="tight",
-        pad_inches=0,
-        dpi=500,
-    )
+# Plot ECDF corresponding to the correct predictions
+data_right = pd.DataFrame(data = {"Uncertainties": uncertainties_right, "Measures": uncertainties_names_right})
 
-    # plt.figure(dpi=500)
-    # plt.imshow(
-    #     semantic_based_uncertainty(y_pred_prob, compatibility_matrix).reshape(
-    #         dataset.shape
-    #     ),
-    #     cmap="turbo",
-    #     vmin=0, 
-    #     vmax=1
-    # )
-    # plt.axis("off")
-    # #cbar = plt.colorbar(location = location, orientation = orientation, pad = 0.01)
-    # #cbar.ax.tick_params(labelsize=12)
-    # plt.savefig(
-    #     f"{images_dir}{model_name}_SBU_manual1.eps",
-    #     bbox_inches="tight",
-    #     pad_inches=0,
-    #     dpi=500,
-    # )
+sns.set(font_scale = 1.5, rc={'axes.facecolor':'white'}) 
+sns.set_theme(style="white")
 
-    # plt.figure(dpi=500)
-    # plt.imshow(
-    #     semantic_based_uncertainty(y_pred_prob, compatibility_matrix1).reshape(
-    #         dataset.shape
-    #     ),
-    #     cmap="turbo",
-    #     vmin=0, 
-    #     vmax=1
-    # )
-    # plt.axis("off")
-    # #cbar = plt.colorbar(location = location, orientation = orientation, pad = 0.01)
-    # #cbar.ax.tick_params(labelsize=12)
-    # plt.savefig(
-    #     f"{images_dir}{model_name}_SBU_manual2.eps",
-    #     bbox_inches="tight",
-    #     pad_inches=0,
-    #     dpi=500,
-    # )
+pp = sns.ecdfplot(data=data_right, x="Uncertainties", hue = "Measures", hue_order= ["Var", r'$GU_{2|FR}$', "Entropy", 'Gini-index', r'$HU$']) 
+fig = pp.figure
+for lines, marker, legend_handle in zip(pp.lines[::-1], ['*', 'o', '+', 's', '8'], pp.legend_.legend_handles): 
+    lines.set_marker(marker)
+    lines.set_markevery(0.1)
+    legend_handle.set_marker(marker)    
+plt.xlim((0,1))
+plt.xlabel('Uncertainty')
+sns.move_legend(pp, loc=9, ncol = 5, title = "",fontsize='medium', borderaxespad=borderaxespad, columnspacing = columnspacing)
+plt.savefig(
+    f"{images_dir}{dataset_name}_{classifier_name}_wellclassified-ecdf_class.png",
+    bbox_inches="tight",
+    pad_inches=0,
+    dpi=500,
+)
+plt.close()
 
+# Outliers plot
+idx = 12823 #Index of data point of interest
+point = X[y!=0, :-2][idx,:] #Data point of interest
+pred_point = predicted_probs[idx,:] #Posterior probability of the point of interest
+pred_point = pred_point/np.max(pred_point)
 
-    #compatibility_matrix = calculate_compatibility_matrix(X, y, "JS")[1:, 1:]
-    #compatibility_matrix = compatibility_matrix[1:, 1:]
-    GU_fr = FR_based_uncertainty(y_pred_prob).reshape(dataset.shape)
-    plt.figure(dpi=500)
-    plt.imshow(
-        GU_fr,
-        cmap="turbo",
-        vmin=0, 
-        vmax=1
-    )
-    plt.axis("off")
-    cbar = plt.colorbar(location = location, orientation = orientation, pad = 0.01)
-    cbar.ax.tick_params(labelsize=12)
-    plt.savefig(
-        f"{images_dir}{model_name}_GBU_FR.eps",
-        bbox_inches="tight",
-        pad_inches=0,
-        dpi=500,
-    )
+mean_sig, std_sig = get_hsi_signature(X, y)
 
+wav = np.arange(0.40289, 0.98909, 0.0093)[:-1]
+for j in range(0,6):
+    plt.plot(wav, mean_sig[j,:], label = labels[j+1], color = color[j])
+    plt.fill_between(wav, mean_sig[j,:]-std_sig[j,:], mean_sig[j,:]+std_sig[j,:], alpha = 0.5, color = color[j])
+plt.legend(loc=9, ncol = 3, borderaxespad=borderaxespad, columnspacing = columnspacing)
+plt.xlabel(r'[$\mu$m]')
+plt.savefig(f"{images_dir}{dataset_name}_signatures_mean.png")
+plt.close()
 
-    # compatibility_matrix = calculate_compatibility_matrix(X, y, "KL")[1:, 1:]
-    # #compatibility_matrix = compatibility_matrix[1:, 1:]
-    # plt.figure(dpi=500)
-    # plt.imshow(
-    #     semantic_based_uncertainty(y_pred_prob, compatibility_matrix).reshape(
-    #         dataset.shape
-    #     ),
-    #     cmap="turbo",
-    #     #vmin=0, 
-    #     #vmax=1
-    # )
-    # plt.axis("off")
-    # cbar = plt.colorbar(location = location, orientation = orientation, pad = 0.01)
-    # cbar.ax.tick_params(labelsize=12)
-    # plt.savefig(
-    #     f"{images_dir}{model_name}_SBU_KL.eps",
-    #     bbox_inches="tight",
-    #     pad_inches=0,
-    #     dpi=500,
-    # )
-
-    print(X.shape)
-    compatibility_matrix = calculate_compatibility_matrix(X[y_true!=0,:], y[y_true!=0], "energy", len(np.unique(y_pred)))#[1:, 1:]
-    SU = semantic_based_uncertainty(y_pred_prob, compatibility_matrix).reshape(
-            dataset.shape
-        )
-    #compatibility_matrix = compatibility_matrix[1:, 1:]
-    plt.figure(dpi=500)
-    su_plt = plt.imshow(
-        SU,
-        cmap="turbo",
-        vmin=0, 
-        vmax=1
-    )
-    plt.axis("off")
-    cbar = plt.colorbar(location = location, orientation = orientation, pad = 0.01)
-    cbar.ax.tick_params(labelsize=12)
-    plt.savefig(
-        f"{images_dir}{model_name}_SBU_energy.eps",
-        bbox_inches="tight",
-        pad_inches=0,
-        dpi=500,
-    )
-    
-    
-    # draw a new figure and replot the colorbar there
-    fig,ax = plt.subplots(dpi=500)
-    cbar = plt.colorbar(su_plt, location = location, orientation = orientation, pad = 0.01)
-    cbar.ax.tick_params(labelsize=12)
-    ax.remove()
-    plt.savefig(f"{images_dir}{model_name}_onlycbar.eps" ,bbox_inches='tight')
-
-
-    plt.figure(dpi=500)
-    plt.imshow(
-        GU - H,
-        cmap="turbo",
-        vmin=-1,
-        vmax=1,
-    )
-    plt.axis("off")
-    cbar = plt.colorbar(location = location, orientation = orientation, pad = 0.01)
-    cbar.ax.tick_params(labelsize=12)
-    plt.savefig(
-        f"{images_dir}{model_name}_DIFF_GBU_H.eps",
-        bbox_inches="tight",
-        pad_inches=0,
-        dpi=500,
-    )
-    
-    plt.figure(dpi=500)
-    plt.imshow(
-        GU - GU_fr,
-        cmap="turbo",
-        vmin=-1,
-        vmax=1,
-    )
-    plt.axis("off")
-    cbar = plt.colorbar(location = location, orientation = orientation, pad = 0.01)
-    cbar.ax.tick_params(labelsize=12)
-    plt.savefig(
-        f"{images_dir}{model_name}_DIFF_GBU_GUFR.eps",
-        bbox_inches="tight",
-        pad_inches=0,
-        dpi=500,
-    )
-
-    plt.figure(dpi=500)
-    plt.imshow(
-        GU - SU,
-        cmap="turbo",
-        vmin=-1,
-        vmax=1,
-    )
-    plt.axis("off")
-    cbar = plt.colorbar(location = location, orientation = orientation, pad = 0.01)
-    cbar.ax.tick_params(labelsize=12)
-    plt.savefig(
-        f"{images_dir}{model_name}_DIFF_GBU_SU.eps",
-        bbox_inches="tight",
-        pad_inches=0,
-        dpi=500,
-    )
+for j in range(0,6):
+    plt.plot(wav, mean_sig[j,:], label = labels[j+1], alpha = pred_point[j], color = color[j])
+    plt.fill_between(wav, mean_sig[j,:]-std_sig[j,:], mean_sig[j,:]+std_sig[j,:], alpha = pred_point[j]/2, color = color[j])
+plt.plot(wav, np.transpose(point), '--', label = "Data point", color = "black")
+plt.legend(loc=9, ncol = 4, borderaxespad=borderaxespad, columnspacing = columnspacing)
+plt.xlabel(r'[$\mu$m]') #, fontsize=15
+plt.savefig(f"{images_dir}{dataset_name}_{classifier_name}_signatures_outlier.png")
+plt.close()

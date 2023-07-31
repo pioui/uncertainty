@@ -19,7 +19,7 @@ outputs_dir = f"outputs/{dataset_name}/"
 images_dir = f"{outputs_dir}images/"
 classifications_dir = f"{outputs_dir}classifications/"
 uncertainties_dir = f"{outputs_dir}uncertainties/"
-compatibility_matrix_file = f"{outputs_dir}{dataset_name}_omegaH.npy"
+H_matrix_file = f"{outputs_dir}{dataset_name}_H.npy"
 
 data_predir = "/home/pigi/data/modulation_classification/"
 data_dir = f"{data_predir}MCNet_SNR_{dataSNR}/"
@@ -63,7 +63,7 @@ preds_file_here = f"{classifications_dir}/{dataset_name}_{classifier_name}.npy"
 preds_file = os.path.join(f"{data_predir}MCNet_SNR_{modelSNR}/", f"MCNet_SNR_{modelSNR}_MCNet_SNR_{dataSNR}_cal_preds_sum1.npy")
 
 if not os.path.exists(preds_file):
-    print(f"Pridiction file {preds_file} does not exist.")
+    print(f"Prediction file {preds_file} does not exist.")
 
 if not os.path.exists(preds_file_here):
     rxTestcalScores = np.load(preds_file)
