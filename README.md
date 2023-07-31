@@ -56,19 +56,8 @@ The repository is designed to run on these specific datasets. However, it is pos
 You have two options for obtaining classification outputs:
 
 1. Download pre-generated outputs: You can download pre-computed classification outputs for the datasets mentioned above from [this Google Drive folder](https://drive.google.com/drive/u/0/folders/1XHM36H289swJfjZJSK0gbZiN9w_JTqfY). Copy ```outputs/``` folder inside ```uncertainty/``` repository. 
-2. Use your own classification outputs: If you have your own classification outputs, ensure they have a similar structure as the pre-generated outputs.
+2. Use your own classification outputs: If you have your own classification outputs, ensure they have a similar structure as the pre-generated outputs (see Classification structure below).
 
-### Configuration
-Edit the data directories and output configurations in the respective configuration files for each dataset you want to use:
-```
-uncertainty
-│   
-└───scripts
-    │   trento_config.py
-    │   bcss_config.py
-    │   signalModulation_config.py
-
-```
 ### Classification structure
 Save the classification probability .npy files for which you want to calculate uncertainties in the following structure:
 ```
@@ -87,6 +76,19 @@ uncertainty
     |       |    <dataset-name2>_<classifier_name2>.npy
 
 ```
+
+### Configuration
+Edit the data directories and output configurations in the respective configuration files for each dataset you want to use:
+```
+uncertainty
+│   
+└───scripts
+    │   trento_config.py
+    │   bcss_config.py
+    │   signalModulation_config.py
+
+```
+
 ## Uncertainty evaluation
 
 To calculate and save uncertainties for all the ```outputs/<dataset-name>/classification/*.npy``` files, run the following command:
