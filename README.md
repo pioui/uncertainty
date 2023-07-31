@@ -120,6 +120,7 @@ To run analysis for Trento, signal modulation, and BCSS, execute the following c
 ```
 python3 scripts signalModulation_analysis.py
 python3 scripts bcss_analysis.py
+python3 scripts trento_analysis.py
 ```
 The output plots and maps will be saved under ```outputs/<dataset-name>/images/*.npy```.
 
