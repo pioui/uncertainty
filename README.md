@@ -45,7 +45,7 @@ pip install -e .
 
 This repository is made to run on the following datasets:
 
-1. <ins> Trento dataset </ins>: Was acquired from the authors of this paper: B. Rasti et al., "Fusion of Hyperspectral and LiDAR Data Using Sparse and Low-Rank Component Analysis," in IEEE TGRS, 2017, doi: 10.1109/TGRS.2017.2726901.
+1. <ins> Trento dataset </ins>: Was acquired from the authors of this paper: P. Ghamisi et al., "Hyperspectral and LiDAR Data Fusion Using Extinction Profiles and Deep Convolutional Neural Network," in IEEE JSTARS, June 2017, doi: 10.1109/JSTARS.2016.263486
 2. <ins> Modulation classification dataset </ins>: The data produced from [this script](https://www.mathworks.com/help/deeplearning/ug/modulation-classification-with-deep-learning.html) with noise levels set to 15dB and 50dB.
 3. <ins> BCSS dataset </ins>: Download the image TCGA-D8-A1JG-DX1_xmin15677_ymin69205_MPP-0.2500 and the corresponding mask from the [BCSS repository](https://github.com/PathologyDataScience/BCSS).
 
