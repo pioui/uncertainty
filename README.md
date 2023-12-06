@@ -1,5 +1,6 @@
 # On Measures Of Uncertainty In Classification
 Geometry-based and homophily-based measures to assess the uncertainty of a pre-trained classifier.
+To learn more about these measures check [this paper](https://ieeexplore.ieee.org/document/10284772).
 
 ## Repository Structure
 
@@ -125,4 +126,16 @@ python3 scripts trento_analysis.py
 The output plots and maps will be saved under ```outputs/<dataset-name>/images/*.npy```.
 
 ## References 
+
+If you find this code useful in your research, please conisder citing the following paper:
+
+@ARTICLE{10284772,
+  author={Chlaily, Saloua and Ratha, Debanshu and Lozou, Pigi and Marinoni, Andrea},
+  journal={IEEE Transactions on Signal Processing}, 
+  title={On Measures of Uncertainty in Classification}, 
+  year={2023},
+  volume={71},
+  number={},
+  pages={3710-3725},
+  doi={10.1109/TSP.2023.3322843}}
 
