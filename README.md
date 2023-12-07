@@ -127,7 +127,7 @@ The output plots and maps will be saved under ```outputs/<dataset-name>/images/*
 
 ## References 
 
-If you find this code useful in your research, please conisder citing the following paper:
+If you find this code useful in your research, please consider citing the following paper:
 
 @ARTICLE{10284772,
   author={Chlaily, Saloua and Ratha, Debanshu and Lozou, Pigi and Marinoni, Andrea},
